@@ -15,6 +15,14 @@ test('form supports private email fields, design selection and a 100-word limit'
   assert.ok(validateTribute({ ...base, message: Array(101).fill('cảm').join(' ') }).error);
   assert.ok(validateTribute({ ...base, message: Array(100).fill('cảm').join(' ') }).data);
 });
+test('faculty/institute is optional, trimmed and restricted to plain text', () => {
+  const base = { sender: 'An', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
+  assert.equal(validateTribute({ ...base, teacherDepartment: '  Viện Công nghệ  ' }).data.teacherDepartment, 'Viện Công nghệ');
+  assert.equal(validateTribute(base).data.teacherDepartment, undefined);
+  assert.equal(validateTribute({ ...base, teacherDepartment: '' }).data.teacherDepartment, '');
+  assert.ok(validateTribute({ ...base, teacherDepartment: { $ne: null } }).error);
+  assert.ok(validateTribute({ ...base, teacherDepartment: 'a'.repeat(121) }).error);
+});
 
 test('accepts trimmed Vietnamese data and excludes untrusted fields', () => {
   assert.deepEqual(validateTribute({ sender: '  Học trò ', teacher: ' Cô Lan ', message: ' Cảm ơn cô rất nhiều! ', role: 'admin' }).data,

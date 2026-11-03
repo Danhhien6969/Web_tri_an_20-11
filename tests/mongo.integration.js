@@ -11,7 +11,7 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
   try {
     const post = (body, headers = {}) => POST(new Request('http://localhost:3000/api/tributes', { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(body) }));
     assert.equal((await post({ sender: { $ne: '' } })).status, 400);
-    const sample = { sender: 'An', teacher: 'Cô Lan (Toán)', message: 'Cảm ơn cô đã giúp em trưởng thành.', senderEmail: 'an@example.com', recipientEmail: 'teacher@example.com', design: 'blush' };
+    const sample = { sender: 'An', teacher: 'Cô Lan (Toán)', teacherDepartment: 'Khoa Công nghệ thông tin', message: 'Cảm ơn cô đã giúp em trưởng thành.', senderEmail: 'an@example.com', recipientEmail: 'teacher@example.com', design: 'blush' };
     assert.equal((await post(sample, { origin: 'https://another.example' })).status, 403);
     const sent = await post(sample); assert.equal(sent.status, 201);
     const created = (await sent.json()).item;
@@ -20,6 +20,7 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
     const stored = await db.collection('tributes').findOne({ sender: 'An' });
     assert.equal(stored._id.toString(), created.id);
     assert.equal(stored.message, sample.message);
+    assert.equal(stored.teacherDepartment, sample.teacherDepartment);
     assert.equal(stored.senderEmail, sample.senderEmail);
     assert.equal(stored.recipientEmail, sample.recipientEmail);
     assert.equal(stored.design, 'blush');
@@ -31,6 +32,7 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
     const list = await (await GET(new Request('http://localhost/api/tributes'))).json();
     assert.equal(list.total, 13); assert.equal(list.items.length, 12); assert.equal(list.items[0].id, created.id);
     assert.equal(list.items[0].design, 'blush');
+    assert.equal(list.items[0].teacherDepartment, sample.teacherDepartment);
     assert.equal('senderEmail' in list.items[0], false);
     assert.equal('recipientEmail' in list.items[0], false);
     const page2 = await (await GET(new Request('http://localhost/api/tributes?page=2'))).json();

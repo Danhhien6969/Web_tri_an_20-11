@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import TributeCard from './TributeCard';
 import { DESIGNS, wordCount } from '../../lib/tribute-design.js';
-const empty = { teacher: '', recipientEmail: '', message: '', sender: '', senderEmail: '' };
+const empty = { teacher: '', teacherDepartment: '', recipientEmail: '', message: '', sender: '', senderEmail: '' };
 export default function TributeComposer({ dialogRef, formRef, sending, error, onSubmit }) {
   const [draft, setDraft] = useState(empty);
   const [design, setDesign] = useState(0);
@@ -23,7 +23,7 @@ export default function TributeComposer({ dialogRef, formRef, sending, error, on
       <form ref={formRef} className="compose-form" onSubmit={onSubmit} onReset={() => { setDraft(empty); setDesign(0); }}>
         <input type="hidden" name="design" value={DESIGNS[design]} />
         <fieldset disabled={sending}>
-          <div className="compose-field-group"><label htmlFor="compose-teacher">Gửi đến</label><input id="compose-teacher" name="teacher" value={draft.teacher} onChange={change} maxLength={100} required placeholder="Tên thầy cô" autoComplete="off" /><label className="sr-only" htmlFor="compose-recipient-email">Email người nhận (không bắt buộc)</label><input id="compose-recipient-email" type="email" name="recipientEmail" value={draft.recipientEmail} onChange={change} maxLength={254} placeholder="Email người nhận (không bắt buộc)" autoComplete="off" /></div>
+          <div className="compose-field-group"><label htmlFor="compose-teacher">Gửi đến</label><input id="compose-teacher" name="teacher" value={draft.teacher} onChange={change} maxLength={100} required placeholder="Tên thầy cô" autoComplete="off" /><label className="sr-only" htmlFor="compose-teacher-department">Khoa / Viện</label><input id="compose-teacher-department" name="teacherDepartment" value={draft.teacherDepartment} onChange={change} maxLength={120} placeholder="Khoa / Viện" autoComplete="off" /><label className="sr-only" htmlFor="compose-recipient-email">Email người nhận (không bắt buộc)</label><input id="compose-recipient-email" type="email" name="recipientEmail" value={draft.recipientEmail} onChange={change} maxLength={254} placeholder="Email người nhận (không bắt buộc)" autoComplete="off" /></div>
           <div className="compose-field-group"><label htmlFor="compose-message">Lời tri ân</label><textarea id="compose-message" name="message" value={draft.message} onChange={change} minLength={10} maxLength={2000} required rows={5} placeholder="Chia sẻ lời tri ân của bạn…" aria-describedby="compose-word-count" /><p id="compose-word-count" className={count > 100 ? 'compose-word-count over-limit' : 'compose-word-count'}>{count}/100 từ</p></div>
           <div className="compose-field-group"><label htmlFor="compose-sender">Người gửi</label><input id="compose-sender" name="sender" value={draft.sender} onChange={change} maxLength={70} required placeholder="Tên người gửi" autoComplete="name" /><label className="sr-only" htmlFor="compose-sender-email">Email người gửi (không bắt buộc)</label><input id="compose-sender-email" type="email" name="senderEmail" value={draft.senderEmail} onChange={change} maxLength={254} placeholder="Email người gửi (không bắt buộc)" autoComplete="email" /></div>
         </fieldset>
