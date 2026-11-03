@@ -1,0 +1,29 @@
+{
+  "name": "tri-an-20-11",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "next start",
+    "dev": "next dev",
+    "build": "next build",
+    "test": "node --test",
+    "db:check": "node --env-file=.env.local scripts/check-db.mjs",
+    "admin:create": "node --env-file=.env.local scripts/create-admin.mjs",
+    "test:integration": "node --test tests/mongo.integration.js tests/admin.integration.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.20.0",
+    "next": "^16.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "mongodb-memory-server": "^11.3.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

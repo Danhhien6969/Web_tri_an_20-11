@@ -1,0 +1,61 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoClient } from 'mongodb';
+import { hashPassword, COOKIE, tokenHash } from '../lib/admin-auth.js';
+import { GET as session, POST as login, DELETE as logout } from '../app/api/admin/session/route.js';
+import { GET as list, POST as create } from '../app/api/admin/tributes/route.js';
+import { PATCH as edit } from '../app/api/admin/tributes/[id]/route.js';
+import { POST as password } from '../app/api/admin/password/route.js';
+import { GET as publicList, POST as publicCreate } from '../app/api/tributes/route.js';
+
+test('admin authentication, moderation, CSRF, session expiry and password revocation', { timeout: 180000 }, async () => {
+  const mongo = await MongoMemoryServer.create();
+  process.env.MONGODB_URI = mongo.getUri(); process.env.MONGODB_DB = 'admin_test';
+  const client = new MongoClient(mongo.getUri());
+  const req = (url, method = 'GET', body, cookie, origin = 'http://localhost:3000') => new Request('http://localhost:3000' + url, { method, headers: { 'Content-Type': 'application/json', origin, ...(cookie ? { cookie } : {}) }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
+  try {
+    await client.connect(); const db = client.db('admin_test');
+    const pass = 'Test-only-password-12345';
+    await db.collection('admins').insertOne({ username: 'admin', role: 'admin', passwordHash: await hashPassword(pass) });
+    assert.equal((await list(req('/api/admin/tributes'))).status, 401);
+    assert.equal((await create(req('/api/admin/tributes', 'POST', {}))).status, 401);
+    assert.equal((await login(req('/api/admin/session', 'POST', { username: 'admin', password: pass }, null, 'https://evil.example'))).status, 403);
+    assert.equal((await login(req('/api/admin/session', 'POST', { username: 'admin', password: 'wrong' }))).status, 401);
+    const logged = await login(req('/api/admin/session', 'POST', { username: 'admin', password: pass }));
+    assert.equal(logged.status, 200); assert.match(logged.headers.get('set-cookie'), /HttpOnly/); assert.match(logged.headers.get('set-cookie'), /SameSite=Strict/);
+    const cookie = logged.headers.get('set-cookie').split(';')[0];
+    assert.equal((await session(req('/api/admin/session', 'GET', undefined, cookie))).status, 200);
+    const sample = { sender: 'Học trò', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
+    const submitted = await (await publicCreate(req('/api/tributes', 'POST', sample))).json();
+    const id = submitted.item.id;
+    assert.equal((await (await publicList(req('/api/tributes'))).json()).total, 0);
+    const pending = await (await list(req('/api/admin/tributes?status=pending', 'GET', undefined, cookie))).json();
+    assert.equal(pending.items.length, 1);
+    const context = { params: Promise.resolve({ id }) };
+    assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { status: 'published' }, `${COOKIE}=${'0'.repeat(64)}`), context)).status, 401);
+    assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { status: 'published' }, cookie, 'https://evil.example'), context)).status, 403);
+    assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', null, cookie), context)).status, 400);
+    assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { status: 'published' }, cookie), context)).status, 200);
+    assert.equal((await (await publicList(req('/api/tributes'))).json()).total, 1);
+    assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { ...sample, message: 'Nội dung đã sửa bởi quản trị viên.' }, cookie), context)).status, 200);
+    assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { status: 'hidden' }, cookie), context)).status, 200);
+    assert.equal((await (await publicList(req('/api/tributes'))).json()).total, 0);
+    const created = await create(req('/api/admin/tributes', 'POST', { ...sample, status: 'published' }, cookie));
+    assert.equal(created.status, 201);
+    assert.equal((await password(req('/api/admin/password', 'POST', { currentPassword: 'wrong', newPassword: 'Another-password-123' }, cookie))).status, 400);
+    assert.equal((await password(req('/api/admin/password', 'POST', { currentPassword: pass, newPassword: 'Another-password-123' }, cookie))).status, 200);
+    assert.equal((await list(req('/api/admin/tributes', 'GET', undefined, cookie))).status, 401);
+    const loggedAgain = await login(req('/api/admin/session', 'POST', { username: 'admin', password: 'Another-password-123' }));
+    const newCookie = loggedAgain.headers.get('set-cookie').split(';')[0];
+    await db.collection('admin_sessions').updateOne({ _id: tokenHash(newCookie.slice(COOKIE.length + 1)) }, { $set: { expiresAt: new Date(0) } });
+    assert.equal((await session(req('/api/admin/session', 'GET', undefined, newCookie))).status, 401);
+    await logout(req('/api/admin/session', 'DELETE', undefined, newCookie));
+    assert.equal(await db.collection('admin_sessions').countDocuments(), 0);
+  } finally {
+    const db = await globalThis.__tributeMongo?.promise;
+    if (db) await db.client.close();
+    globalThis.__tributeMongo.promise = null;
+    await client.close(); await mongo.stop();
+  }
+});
