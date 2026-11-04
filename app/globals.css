@@ -167,3 +167,7 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .backdrop-branch { position: absolute; left: 0; top: 140px; width: min(17vw, 290px); opacity: .65; }
 .backdrop-book { position: absolute; right: 1.5%; top: 560px; width: min(15vw, 260px); opacity: .68; }
 @media (max-width: 1350px) { .home-backdrop { display: none; } }
+
+.backdrop-branch { height: auto; opacity: .85; }
+.backdrop-book { aspect-ratio: 2.25; overflow: hidden; opacity: .9; }
+.backdrop-book img { display: block; width: 100%; height: auto; transform: translateY(-30%); }
