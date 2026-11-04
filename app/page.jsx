@@ -73,7 +73,7 @@ export default function Home() {
     </header>
     <main className="mx-auto max-w-[1240px]">
       <section className="mx-auto w-full max-w-[960px] overflow-hidden md:rounded-b-xl" aria-label="Từ trái tim người học trò gửi đến thầy cô">
-        <img src="/banner.png" width="1500" height="823" alt="Từ trái tim người học trò gửi đến thầy cô! Happy Teachers’ Day 20.11" className="h-auto w-full" fetchPriority="high" />
+        <img src="/banner.png" width="1693" height="929" alt="Từ trái tim người học trò gửi đến thầy cô! Happy Teachers’ Day 20.11" className="h-auto w-full" fetchPriority="high" />
         <a href="#loi-tri-an" className="flex items-center justify-between bg-gold/70 px-6 py-3 text-[10px] tracking-wide">Khám phá những lời yêu thương <span className="text-2xl text-rose">↓</span></a>
       </section>
       <section id="ky-uc" className="relative overflow-hidden px-6 py-14 text-center md:py-20">
