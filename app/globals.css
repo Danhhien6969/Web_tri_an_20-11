@@ -126,3 +126,7 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
   .tribute-reader { background-position: center top; }
   .reader-actions { padding: 22px 12px; }
 }
+
+.falling-flamboyant { position: absolute; top: -100px; left: var(--x); width: var(--size); height: calc(var(--size) * 1.6); color: var(--tint); opacity: 0; animation: tribute-fall var(--duration) var(--delay) linear infinite; }
+.falling-flamboyant svg { width: 100%; height: 100%; animation: tribute-sway 5s ease-in-out infinite alternate; }
+@media (max-width: 760px) { .falling-flamboyant:nth-child(2n) { display: none; } }
