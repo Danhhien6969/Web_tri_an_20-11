@@ -141,3 +141,6 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
   85% { opacity: .5; }
   100% { transform: translate3d(var(--drift), 95dvh, 0) rotate(var(--turn)); opacity: 0; }
 }
+
+.tribute-card-logos { display: block; width: 176px; max-width: 80%; height: auto; margin: 0 auto; }
+.reader-card .tribute-card-logos, .tribute-card-preview .tribute-card-logos { width: 200px; }
