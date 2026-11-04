@@ -148,7 +148,3 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .tribute-card-logo-group { display: flex; justify-content: center; align-items: center; gap: 14px; margin: 4px auto 8px; }
 .tribute-card-logo-group img { display: block; width: 52px; height: 62px; object-fit: contain; }
 .reader-card .tribute-card-logo-group img, .tribute-card-preview .tribute-card-logo-group img { width: 60px; height: 72px; }
-
-.homepage-poster { width: 100vw; margin-left: calc(50% - 50vw); min-height: calc(100svh - 110px); display: flex; flex-direction: column; overflow: hidden; background: #fff5c5; }
-.homepage-poster > img { display: block; width: 100%; height: auto; flex: 1; min-height: 0; object-fit: contain; }
-.homepage-poster > a { flex-shrink: 0; margin-top: auto; }
