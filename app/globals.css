@@ -144,3 +144,7 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 
 .tribute-card-logos { display: block; width: 176px; max-width: 80%; height: auto; margin: 0 auto; }
 .reader-card .tribute-card-logos, .tribute-card-preview .tribute-card-logos { width: 200px; }
+
+.tribute-card-logo-group { display: flex; justify-content: center; align-items: center; gap: 14px; margin: 4px auto 8px; }
+.tribute-card-logo-group img { display: block; width: 52px; height: 62px; object-fit: contain; }
+.reader-card .tribute-card-logo-group img, .tribute-card-preview .tribute-card-logo-group img { width: 60px; height: 72px; }
