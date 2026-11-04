@@ -1,7 +1,7 @@
 'use client';
 import ForumEntries from './components/ForumEntries';
 import HomeBackdrop from './components/HomeBackdrop';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import TributeConfetti from './components/TributeConfetti';
 import TributeComposer from './components/TributeComposer';
 import TributeCard from './components/TributeCard';
@@ -14,6 +14,18 @@ const eyebrow = 'text-[10px] font-bold tracking-[.2em] text-[#be7660]';
 function Brand() { return <a href="#" className="flex flex-col leading-tight text-rose"><span className="font-script text-3xl">Từ trái tim</span><small className="mt-1 text-[9px] tracking-[.3em]">NGƯỜI HỌC TRÒ</small></a>; }
 
 export default function Home() {
+  useLayoutEffect(() => {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (navigation?.type !== 'reload') return;
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = 'manual';
+    if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+    const top = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    top();
+    const frame = requestAnimationFrame(top);
+    window.addEventListener('load', top, { once: true });
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('load', top); history.scrollRestoration = previous; };
+  }, []);
   const [items, setItems] = useState([]);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
