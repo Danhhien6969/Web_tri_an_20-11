@@ -144,24 +144,3 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 
 .tribute-card-logos { display: block; width: 176px; max-width: 80%; height: auto; margin: 0 auto; }
 .reader-card .tribute-card-logos, .tribute-card-preview .tribute-card-logos { width: 200px; }
-
-/* Leave the illustrated bouquet and books visible beside the card. */
-@media (min-width: 1000px) {
-  .tribute-reader {
-    width: min(98vw, 1740px);
-    min-height: min(860px, 94dvh);
-    max-height: 94dvh;
-    padding: clamp(36px, 5vh, 60px) 4% clamp(90px, 14vh, 150px) 23%;
-    background-size: 100% 100%;
-  }
-  .reader-columns { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 3vw, 52px); }
-  .reader-card { max-width: 480px; }
-  .reader-card .tribute-card-frame { min-height: 480px; padding: 15px; }
-  .reader-card .tribute-card-paper { padding: 22px; }
-  .reader-card .tribute-card-message { font-size: 15px; line-height: 1.8; min-height: 190px; }
-  .reader-card .tribute-card-logos { width: 165px; }
-  .reader-card .tribute-card-recipient, .reader-card .tribute-card-sender { font-size: 12px; }
-  .reader-actions { padding: 24px 14px; }
-  .reader-compose { font-size: 14px; padding: 15px 18px; }
-  .reader-actions section button { font-size: 12px; padding: 10px 12px; }
-}
