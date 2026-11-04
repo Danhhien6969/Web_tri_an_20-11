@@ -197,3 +197,5 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .tribute-carousel .tribute-card-avatar { width:25px; height:25px; }
 
 .tribute-card-thumbnail { width:100%; aspect-ratio:16/9; object-fit:cover; object-position:center 65%; border-radius:6px; margin-bottom:12px; }
+
+.forum-rich-editor:empty::before { content:attr(data-placeholder); color:#999; pointer-events:none; }

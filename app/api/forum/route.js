@@ -12,8 +12,15 @@ export async function POST(request) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || data.content.split(/\s+/u).length > 1500 || form.get('agreed') !== 'on') return json({ error: 'Kiểm tra email, giới hạn 1.500 từ và xác nhận đồng ý.' }, 400);
     const alignment = form.get('alignment') || 'left';
     const textColor = form.get('textColor') || '#60362c';
-    if (!['left','center','right','justify'].includes(alignment) || !['#60362c','#dc2626','#1565c0','#ca8a04'].includes(textColor)) return json({ error: 'Định dạng văn bản không hợp lệ.' }, 400);
+    if (!['left','center','right','justify'].includes(alignment) || !['#000000','#60362c','#dc2626','#1565c0','#ca8a04'].includes(textColor)) return json({ error: 'Định dạng văn bản không hợp lệ.' }, 400);
     data.alignment = alignment; data.textColor = textColor;
+    if (form.get('contentRuns')) {
+      let runs; try { runs = JSON.parse(form.get('contentRuns')); } catch { return json({ error: 'Định dạng không hợp lệ.' }, 400); }
+      const colors = ['rgb(0, 0, 0)','rgb(220, 38, 38)','rgb(21, 101, 192)','rgb(202, 138, 4)'];
+      if (!Array.isArray(runs) || runs.length > 20000 || runs.some(r => !r || typeof r.text !== 'string' || !colors.includes(r.color) || typeof r.bold !== 'boolean') || runs.map(r => r.text).join('').trim().normalize('NFC') !== data.content) return json({ error: 'Định dạng nội dung không hợp lệ.' }, 400);
+      data.contentRuns = runs.map(({text,color,bold}) => ({text,color,bold}));
+    }
+
     const image = form.get('image'); if (!image || !['image/jpeg','image/png','image/webp'].includes(image.type) || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);
     const articleImage = form.get('articleImage');
     if (articleImage?.size) {
