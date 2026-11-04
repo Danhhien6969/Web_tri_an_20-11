@@ -14,6 +14,7 @@ export default function ForumPage() {
           <p>Hãy kể lại dấu ấn của thầy cô bằng câu chuyện của chính bạn — như một lời cảm ơn nhân ngày Nhà giáo Việt Nam 20/11.</p>
         </div>
         <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[#efd6b2] bg-white/70 px-5 py-8"><p className="text-sm text-[#917867]">Thời gian nộp bài</p><p className="mt-3 text-xl font-bold text-rose md:text-2xl"><time dateTime="2026-11-05">05/11/2026</time> – <time dateTime="2026-11-20">20/11/2026</time></p><div className="mt-6 flex flex-wrap justify-center gap-x-10 gap-y-3 text-sm"><p>Đối tượng: <strong>Tất cả tác giả</strong></p><p>Hình thức: <strong>Bài viết tối đa 1.500 từ</strong></p></div></div>
+        <a href="/nhung-dau-an-thay-co/dang-ky" className="mt-8 inline-flex items-center gap-5 rounded-full bg-rose px-10 py-4 font-semibold text-white">Đăng ký tham gia <span aria-hidden="true">→</span></a>
       </section>
     </main>
   </>;
