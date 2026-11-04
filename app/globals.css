@@ -107,3 +107,22 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .reader-actions section h3 { font-size: 16px; margin-bottom: 15px; }
 .reader-actions section button { padding: 12px 14px; font-size: 14px; border-radius: 11px; }
 @media (max-width: 760px) { .tribute-reader { padding: 60px 18px 28px; } .reader-columns { grid-template-columns: minmax(0, 1fr); gap: 30px; } .reader-card .tribute-card-frame { min-height: 0; padding: 14px; } .reader-card .tribute-card-paper { padding: 20px; } .reader-card .tribute-card-message { font-size: 15px; min-height: 180px; } }
+
+/* Background supplied for the tribute reading dialog. */
+.tribute-reader {
+  background-color: #fff8ef;
+  background-image: url('/tribute-reader-background.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.reader-actions {
+  padding: 28px 18px;
+  border-radius: 18px;
+  background: #fffdf3e8;
+  box-shadow: 0 6px 24px #8941250d;
+}
+@media (max-width: 760px) {
+  .tribute-reader { background-position: center top; }
+  .reader-actions { padding: 22px 12px; }
+}
