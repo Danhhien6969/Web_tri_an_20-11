@@ -90,3 +90,20 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 }
 @media (prefers-reduced-motion: reduce) { .tribute-confetti { display: none; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.tribute-reader { position: fixed; inset: 0; margin: auto; width: min(96vw, 1320px); max-height: 92dvh; overflow-y: auto; border: 1px solid #efdbb8; border-radius: 18px; padding: 48px 64px; color: #60362c; background: radial-gradient(ellipse at top right, #ffe9a160, transparent 65%), linear-gradient(135deg, #fffdf6, #fff8e7); }
+.reader-close { position: absolute; top: 14px; right: 16px; width: 42px; height: 42px; border-radius: 50%; background: white; color: #60362c; font-size: 30px; line-height: 1; box-shadow: 0 2px 12px #683c2214; }
+.reader-columns { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+.reader-card { width: 100%; max-width: 560px; margin: auto; }
+.reader-card .tribute-card-frame { min-height: 550px; box-shadow: 0 12px 28px #714c221c; padding: 20px; }
+.reader-card .tribute-card-brand { font-size: 34px; }
+.reader-card .tribute-card-paper { padding: 26px; }
+.reader-card .tribute-card-message { font-size: 17px; line-height: 1.9; min-height: 260px; }
+.reader-card .tribute-card-recipient, .reader-card .tribute-card-sender { font-size: 14px; }
+.reader-actions { text-align: center; }
+.reader-compose { padding: 17px 23px; border-radius: 13px; background: #ff123d; color: white; font-size: 16px; font-weight: 700; box-shadow: 0 3px 8px #ad183e20; }
+.reader-actions section { border: 0; margin-top: 24px; padding-top: 0; }
+.reader-actions section > div { justify-content: center; }
+.reader-actions section h3 { font-size: 16px; margin-bottom: 15px; }
+.reader-actions section button { padding: 12px 14px; font-size: 14px; border-radius: 11px; }
+@media (max-width: 760px) { .tribute-reader { padding: 60px 18px 28px; } .reader-columns { grid-template-columns: minmax(0, 1fr); gap: 30px; } .reader-card .tribute-card-frame { min-height: 0; padding: 14px; } .reader-card .tribute-card-paper { padding: 20px; } .reader-card .tribute-card-message { font-size: 15px; min-height: 180px; } }
