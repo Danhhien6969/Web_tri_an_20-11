@@ -173,3 +173,12 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .backdrop-book img { display: block; width: 100%; height: auto; transform: translateY(-30%); }
 
 .tribute-card-compact .tribute-card-message { min-height: 0; max-height: 5.7em; }
+.tribute-carousel { display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:thin; padding-bottom:12px; }
+.tribute-carousel-item { flex:0 0 calc((100% - 64px)/5); min-width:0; scroll-snap-align:start; }
+.tribute-carousel .tribute-card-frame { padding:10px; }
+.tribute-carousel .tribute-card-paper { padding:14px; }
+.tribute-carousel .tribute-card-logo-group { gap:6px; }
+.tribute-carousel .tribute-card-logo-group img { width:36px; height:44px; }
+@media(max-width:1100px) { .tribute-carousel-item { flex-basis:calc((100% - 32px)/3); } }
+@media(max-width:700px) { .tribute-carousel-item { flex-basis:calc((100% - 16px)/2); } }
+@media(max-width:480px) { .tribute-carousel-item { flex-basis:88%; } }

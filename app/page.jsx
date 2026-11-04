@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import TributeConfetti from './components/TributeConfetti';
 import TributeComposer from './components/TributeComposer';
 import TributeCard from './components/TributeCard';
+import TributeCarousel from './components/TributeCarousel';
 import TributeShare from './components/TributeShare';
 import { listKey, loadTributes, readListCache, writeListCache } from '../lib/tribute-loader.js';
 
@@ -104,7 +105,7 @@ export default function Home() {
         {error && <div role="alert" className="mb-5 rounded-lg border border-red-200 bg-red-50 p-5 text-sm"><p>{error}</p><button className="mt-3 font-semibold text-rose underline" onClick={() => setRevision(x => x + 1)}>Thử lại</button></div>}
         {loading && !items.length && <p role="status" className="py-12 text-center text-sm text-[#917867]">Đang mở những lời yêu thương…</p>}
         {!loading && !error && items.length === 0 && <div className="rounded-xl border border-dashed border-[#e6c89d] p-12 text-center"><span className="text-4xl text-rose">♡</span><p className="mt-4 text-sm">{query ? 'Chưa tìm thấy lời tri ân phù hợp.' : 'Hãy là người đầu tiên gửi lời cảm ơn đến thầy cô.'}</p><button className={`${button} mt-5`} onClick={openForm}>Gửi lời tri ân đầu tiên</button></div>}
-        {items.length > 0 && <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{items.map(item => <button key={item.id} onClick={() => { setSelected(item); readDialog.current.showModal(); }} className="text-left transition hover:-translate-y-1 hover:shadow-md"><TributeCard item={item} /></button>)}</div>}
+        {items.length > 0 && <TributeCarousel items={items} onOpen={item => { setSelected(item); readDialog.current.showModal(); }} onNextPage={pages > 1 ? () => setPage(p => p >= pages ? 1 : p + 1) : undefined} />}
         {!loading && !error && pages > 1 && <nav aria-label="Phân trang" className="mt-8 flex items-center justify-center gap-5 text-xs"><button className={button} disabled={page <= 1} onClick={() => setPage(p => p - 1)}>← Trước</button><span>Trang {page} / {pages}</span><button className={button} disabled={page >= pages} onClick={() => setPage(p => p + 1)}>Sau →</button></nav>}
       </section>
       <section className="mx-5 mb-10 rounded-xl bg-gold/70 px-5 py-12 text-center md:mx-7"><span className="text-3xl text-rose" aria-hidden="true">♡</span><p className="my-5 font-display text-3xl leading-snug">Dù đi muôn phương,<br /><em className="text-rose">vẫn nhớ một mái trường.</em></p><button className={button} onClick={openForm}>Gửi đến thầy cô một lời cảm ơn ↗</button></section>
