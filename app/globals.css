@@ -199,3 +199,8 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .tribute-card-thumbnail { width:100%; aspect-ratio:16/9; object-fit:cover; object-position:center 65%; border-radius:6px; margin-bottom:12px; }
 
 .forum-rich-editor:empty::before { content:attr(data-placeholder); color:#999; pointer-events:none; }
+/* Supplied forum poster forms the header background of the story reader. */
+.forum-story-reader { position:fixed; inset:0; margin:auto; width:min(94vw,960px); max-height:90dvh; overflow-y:auto; border:1px solid #e8dcc3; border-radius:20px; padding:clamp(140px,30vw,320px) 28px 28px; background-color:#f3faef; background-image:url('/home-forum-poster.png'),linear-gradient(135deg,#fffaf0,#edf9ee); background-position:center top,center; background-size:100% auto,cover; background-repeat:no-repeat; box-shadow:0 20px 70px #38281933; }
+.forum-story-paper { position:relative; padding:30px; border:1px solid #e5ddc7; border-radius:16px; background:#fffefaf5; box-shadow:0 8px 30px #647b4312; }
+.forum-story-close { position:sticky; top:0; z-index:2; display:block; margin:-12px -12px 12px auto; width:40px; height:40px; border:1px solid #e8dcc3; border-radius:50%; background:#fffef9; color:#60362c; font-size:26px; box-shadow:0 3px 10px #60362c14; }
+@media(max-width:600px) { .forum-story-reader { padding:clamp(110px,30vw,180px) 12px 16px; border-radius:16px; } .forum-story-paper { padding:20px 16px; } .forum-story-paper h2 { font-size:24px; } .forum-story-close { margin-right:0; } }
