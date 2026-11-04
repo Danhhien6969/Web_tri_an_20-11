@@ -130,3 +130,14 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .falling-flamboyant { position: absolute; top: -100px; left: var(--x); width: var(--size); height: calc(var(--size) * 1.6); color: var(--tint); opacity: 0; animation: tribute-fall var(--duration) var(--delay) linear infinite; }
 .falling-flamboyant svg { width: 100%; height: 100%; animation: tribute-sway 5s ease-in-out infinite alternate; }
 @media (max-width: 760px) { .falling-flamboyant:nth-child(2n) { display: none; } }
+
+.tribute-reader { isolation: isolate; }
+.reader-leaves { position: absolute; inset: 0; z-index: 2; border-radius: inherit; }
+.reader-leaves .falling-flamboyant { animation-name: reader-leaf-fall; }
+.reader-close { z-index: 3; }
+@keyframes reader-leaf-fall {
+  0% { transform: translate3d(0, -100px, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: .6; }
+  85% { opacity: .5; }
+  100% { transform: translate3d(var(--drift), 95dvh, 0) rotate(var(--turn)); opacity: 0; }
+}

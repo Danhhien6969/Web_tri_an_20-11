@@ -110,6 +110,7 @@ export default function Home() {
     <footer className="mx-auto flex max-w-[1184px] flex-wrap items-center justify-between gap-6 border-t border-[#edddc2] px-5 py-9 text-xs"><Brand /><p className="leading-6">GỬI ĐẾN THẦY CÔ!<br /><span className="text-[#aa8970]">Chào mừng ngày Nhà giáo Việt Nam 20/11</span></p><a href="#">Về đầu trang ↑</a></footer>
     <TributeComposer dialogRef={formDialog} formRef={form} sending={sending} error={formError} onSubmit={sendTribute} />
     <dialog ref={readDialog} className="tribute-reader" aria-label="Lời tri ân và chia sẻ">
+      <TributeConfetti leavesOnly />
       <button className="reader-close" aria-label="Đóng" onClick={() => readDialog.current.close()}>×</button>
       {selected && <div className="reader-columns">
         <div className="reader-card"><TributeCard item={selected} expanded /></div>
