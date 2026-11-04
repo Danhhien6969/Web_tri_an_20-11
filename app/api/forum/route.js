@@ -36,7 +36,7 @@ export async function POST(request) {
     const db = await getDatabase();
     const bucket = Math.floor(Date.now() / 60000); const window = await db.collection('write_windows').findOneAndUpdate({ _id: `forum:${bucket}` }, { $inc: { count: 1 }, $setOnInsert: { expiresAt: new Date((bucket + 2) * 60000) } }, { upsert: true, returnDocument: 'after' });
     if (window.count > 10) return json({ error: 'Vui lòng thử lại sau một phút.' }, 429);
-    await db.collection('forum_entries').insertOne({ ...data, image: avatarBytes, imageType: image.type, status: 'published', createdAt: new Date() });
+    await db.collection('forum_entries').insertOne({ ...data, image: avatarBytes, imageType: image.type, status: 'pending', createdAt: new Date() });
     return json({ ok: true }, 201);
   } catch { return json({ error: 'Chưa gửi được bài viết. Vui lòng thử lại sau.' }, 503); }
 }

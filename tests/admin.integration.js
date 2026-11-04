@@ -1,3 +1,6 @@
+import { GET as forumAdminList } from '../app/api/admin/forum/route.js';
+import { PATCH as forumModerate } from '../app/api/admin/forum/[id]/route.js';
+import { GET as forumPublicList } from '../app/api/forum/route.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -25,6 +28,19 @@ test('admin authentication, moderation, CSRF, session expiry and password revoca
     const logged = await login(req('/api/admin/session', 'POST', { username: 'admin', password: pass }));
     assert.equal(logged.status, 200); assert.match(logged.headers.get('set-cookie'), /HttpOnly/); assert.match(logged.headers.get('set-cookie'), /SameSite=Strict/);
     const cookie = logged.headers.get('set-cookie').split(';')[0];
+    const story = await db.collection('forum_entries').insertOne({title:'Câu chuyện thử nghiệm',name:'Tác giả',content:'Một kỷ niệm đáng nhớ về thầy cô.',status:'pending',createdAt:new Date(),email:'private@example.com',phone:'private',image:Buffer.from('test')});
+    const storyContext={params:Promise.resolve({id:story.insertedId.toString()})};
+    assert.equal((await forumAdminList(req('/api/admin/forum'))).status,401);
+    assert.equal((await (await forumPublicList(req('/api/forum'))).json()).items.length,0);
+    const storyList=await (await forumAdminList(req('/api/admin/forum?status=pending','GET',undefined,cookie))).json();
+    assert.equal(storyList.items.length,1); assert.equal(storyList.items[0].image,undefined);
+    assert.equal((await forumModerate(req('/api/admin/forum/'+story.insertedId,'PATCH',{status:'published'},cookie,'https://evil.example'),storyContext)).status,403);
+    assert.equal((await forumModerate(req('/api/admin/forum/'+story.insertedId,'PATCH',{status:'published'},cookie),storyContext)).status,200);
+    const publicStories=await (await forumPublicList(req('/api/forum'))).json();
+    assert.equal(publicStories.items.length,1); assert.equal(publicStories.items[0].email,undefined); assert.equal(publicStories.items[0].phone,undefined);
+    await forumModerate(req('/api/admin/forum/'+story.insertedId,'PATCH',{status:'hidden'},cookie),storyContext);
+    assert.equal((await (await forumPublicList(req('/api/forum'))).json()).items.length,0);
+
     assert.equal((await session(req('/api/admin/session', 'GET', undefined, cookie))).status, 200);
     const sample = { sender: 'Học trò', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
     const submitted = await (await publicCreate(req('/api/tributes', 'POST', sample))).json();
