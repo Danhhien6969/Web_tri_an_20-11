@@ -10,6 +10,10 @@ export async function POST(request) {
     const data = {};
     for (const [key, max] of [['name',100],['phone',100],['email',254],['title',100],['content',20000]]) { const value = form.get(key); if (typeof value !== 'string' || !value.trim() || value.trim().length > max) return json({ error: 'Vui lòng kiểm tra thông tin bài viết.' }, 400); data[key] = value.trim().normalize('NFC'); }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || data.content.split(/\s+/u).length > 1500 || form.get('agreed') !== 'on') return json({ error: 'Kiểm tra email, giới hạn 1.500 từ và xác nhận đồng ý.' }, 400);
+    const alignment = form.get('alignment') || 'left';
+    const textColor = form.get('textColor') || '#60362c';
+    if (!['left','center','right','justify'].includes(alignment) || !['#60362c','#dc2626','#1565c0','#ca8a04'].includes(textColor)) return json({ error: 'Định dạng văn bản không hợp lệ.' }, 400);
+    data.alignment = alignment; data.textColor = textColor;
     const image = form.get('image'); if (!image || !['image/jpeg','image/png','image/webp'].includes(image.type) || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);
     const db = await getDatabase();
     const bucket = Math.floor(Date.now() / 60000); const window = await db.collection('write_windows').findOneAndUpdate({ _id: `forum:${bucket}` }, { $inc: { count: 1 }, $setOnInsert: { expiresAt: new Date((bucket + 2) * 60000) } }, { upsert: true, returnDocument: 'after' });
