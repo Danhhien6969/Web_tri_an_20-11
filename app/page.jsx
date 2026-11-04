@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import TributeConfetti from './components/TributeConfetti';
 import TributeComposer from './components/TributeComposer';
 import TributeCard from './components/TributeCard';
+import TributeShare from './components/TributeShare';
 import { listKey, loadTributes, readListCache, writeListCache } from '../lib/tribute-loader.js';
 
 const button = 'rounded-lg bg-rose px-5 py-3 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-50';
@@ -47,6 +48,17 @@ export default function Home() {
     return () => { clearTimeout(timer); controller.abort(); };
   }, [query, page, revision]);
   useEffect(() => { if (toast) { const timer = setTimeout(() => setToast(''), 4500); return () => clearTimeout(timer); } }, [toast]);
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('tribute');
+    if (!id) return;
+    const controller = new AbortController();
+    fetch('/api/tributes/' + encodeURIComponent(id), { signal: controller.signal }).then(async response => {
+      if (!response.ok) throw new Error();
+      const data = await response.json(); setSelected(data.item); readDialog.current.showModal();
+    }).catch(error => { if (error.name !== 'AbortError') setToast('Bài viết chưa được duyệt hoặc không còn hiển thị.'); });
+    return () => controller.abort();
+  }, []);
 
   function openForm() { setFormError(''); formDialog.current.showModal(); }
   async function sendTribute(e) {
@@ -97,7 +109,7 @@ export default function Home() {
     </main>
     <footer className="mx-auto flex max-w-[1184px] flex-wrap items-center justify-between gap-6 border-t border-[#edddc2] px-5 py-9 text-xs"><Brand /><p className="leading-6">GỬI ĐẾN THẦY CÔ!<br /><span className="text-[#aa8970]">Chào mừng ngày Nhà giáo Việt Nam 20/11</span></p><a href="#">Về đầu trang ↑</a></footer>
     <TributeComposer dialogRef={formDialog} formRef={form} sending={sending} error={formError} onSubmit={sendTribute} />
-    <dialog ref={readDialog} className="fixed inset-0 m-auto max-h-[90vh] w-[94vw] max-w-lg overflow-y-auto rounded-xl border border-[#efd6b2] bg-cream p-8 text-ink"><button className="float-right text-3xl" aria-label="Đóng" onClick={() => readDialog.current.close()}>×</button><span className={eyebrow}>TỪ TRÁI TIM</span><h2 className="mt-5 break-words font-display text-3xl">Gửi đến {selected?.teacher}</h2>{selected?.teacherDepartment && <p className="mt-2 text-sm text-stone-500">Khoa / Viện: {selected.teacherDepartment}</p>}<p className="my-6 whitespace-pre-wrap break-words text-sm leading-8">{selected?.message}</p><p className="text-right text-xs text-[#987967]">♡ {selected?.sender}{selected?.senderDepartment && <span className="mt-1 block">Khoa / Viện: {selected.senderDepartment}</span>}</p></dialog>
+    <dialog ref={readDialog} className="fixed inset-0 m-auto max-h-[90vh] w-[94vw] max-w-lg overflow-y-auto rounded-xl border border-[#efd6b2] bg-cream p-8 text-ink"><button className="float-right text-3xl" aria-label="Đóng" onClick={() => readDialog.current.close()}>×</button><span className={eyebrow}>TỪ TRÁI TIM</span><h2 className="mt-5 break-words font-display text-3xl">Gửi đến {selected?.teacher}</h2>{selected?.teacherDepartment && <p className="mt-2 text-sm text-stone-500">Khoa / Viện: {selected.teacherDepartment}</p>}<p className="my-6 whitespace-pre-wrap break-words text-sm leading-8">{selected?.message}</p><p className="text-right text-xs text-[#987967]">♡ {selected?.sender}{selected?.senderDepartment && <span className="mt-1 block">Khoa / Viện: {selected.senderDepartment}</span>}</p>{selected && <TributeShare item={selected} />}</dialog>
     {toast && <div role="status" className="fixed bottom-6 left-1/2 z-50 w-[90%] max-w-md -translate-x-1/2 rounded-xl bg-ink px-6 py-4 text-center text-xs leading-6 text-white shadow-lg">{toast}</div>}
   </>;
 }
