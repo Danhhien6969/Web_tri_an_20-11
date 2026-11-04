@@ -1,3 +1,4 @@
+import { castForumVote } from '../lib/forum-votes.js';
 import { GET as moderationCounts } from '../app/api/admin/moderation/route.js';
 import { GET as forumAdminList } from '../app/api/admin/forum/route.js';
 import { PATCH as forumModerate } from '../app/api/admin/forum/[id]/route.js';
@@ -37,14 +38,20 @@ test('admin authentication, moderation, CSRF, session expiry and password revoca
     const storyContext={params:Promise.resolve({id:story.insertedId.toString()})};
     assert.equal((await forumAdminList(req('/api/admin/forum'))).status,401);
     assert.equal((await (await forumPublicList(req('/api/forum'))).json()).items.length,0);
+    assert.equal(await castForumVote(db,story.insertedId.toString(),'32345678-1234-4123-8123-123456789abc'),null);
     const storyList=await (await forumAdminList(req('/api/admin/forum?status=pending','GET',undefined,cookie))).json();
     assert.equal(storyList.items.length,1); assert.equal(storyList.items[0].image,undefined);
     assert.equal((await forumModerate(req('/api/admin/forum/'+story.insertedId,'PATCH',{status:'published'},cookie,'https://evil.example'),storyContext)).status,403);
     assert.equal((await forumModerate(req('/api/admin/forum/'+story.insertedId,'PATCH',{status:'published'},cookie),storyContext)).status,200);
     const publicStories=await (await forumPublicList(req('/api/forum'))).json();
+    const voter='12345678-1234-4123-8123-123456789abc';
+    await Promise.all(Array.from({length:3},()=>castForumVote(db,story.insertedId.toString(),voter)));
+    assert.equal((await castForumVote(db,story.insertedId.toString(),voter)).votes,1);
+    assert.equal((await castForumVote(db,story.insertedId.toString(),'22345678-1234-4123-8123-123456789abc')).votes,2);
     assert.equal(publicStories.items.length,1); assert.equal(publicStories.items[0].email,undefined); assert.equal(publicStories.items[0].phone,undefined);
     await forumModerate(req('/api/admin/forum/'+story.insertedId,'PATCH',{status:'hidden'},cookie),storyContext);
     assert.equal((await (await forumPublicList(req('/api/forum'))).json()).items.length,0);
+    assert.equal(await castForumVote(db,story.insertedId.toString(),'32345678-1234-4123-8123-123456789abc'),null);
 
     assert.equal((await session(req('/api/admin/session', 'GET', undefined, cookie))).status, 200);
     const sample = { sender: 'Học trò', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
