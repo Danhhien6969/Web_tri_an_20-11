@@ -46,3 +46,11 @@ test('validates pagination and treats regex metacharacters as literal text', () 
   const regex = new RegExp(escapeRegex(literal));
   assert.ok(regex.test(literal)); assert.equal(regex.test('Thầy Toán bất kỳ A'), false);
 });
+
+test('rejects invalid and oversized tribute images', () => {
+ const base = { sender: 'An', teacher: 'Cô Lan', message: 'Cảm ơn cô rất nhiều!' };
+ assert.ok(validateTribute({ ...base, image: 'data:image/svg+xml;base64,AAAA' }).error);
+ assert.ok(validateTribute({ ...base, image: 'data:image/png;base64,AAAA' }).error);
+ assert.ok(validateTribute({ ...base, image: 'x'.repeat(1400001) }).error);
+ assert.equal(validateTribute({ ...base, image: '' }).data.image, '');
+});

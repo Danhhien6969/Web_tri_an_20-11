@@ -2,10 +2,17 @@
 import { useState } from 'react';
 import TributeCard from './TributeCard';
 import { DESIGNS, wordCount } from '../../lib/tribute-design.js';
-const empty = { teacher: '', teacherDepartment: '', message: '', sender: '', senderDepartment: '' };
+const empty = { teacher: '', teacherDepartment: '', message: '', sender: '', senderDepartment: '', image: '' };
 export default function TributeComposer({ dialogRef, formRef, sending, error, onSubmit }) {
   const [draft, setDraft] = useState(empty);
   const [design, setDesign] = useState(0);
+  const [imageError, setImageError] = useState('');
+  function chooseImage(event) {
+    const file = event.target.files[0]; setImageError('');
+    if (!file) { setDraft(old => ({ ...old, image: '' })); return; }
+    if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 1024 * 1024) { event.target.value = ''; setImageError('Chọn ảnh JPG, PNG hoặc WebP tối đa 1 MB.'); return; }
+    const reader = new FileReader(); reader.onload = () => setDraft(old => ({ ...old, image: reader.result })); reader.readAsDataURL(file);
+  }
   const count = wordCount(draft.message);
   const change = e => setDraft(old => ({ ...old, [e.target.name]: e.target.value }));
   return <dialog ref={dialogRef} onCancel={e => { if (sending) e.preventDefault(); }} aria-labelledby="compose-title" className="tribute-compose">
@@ -21,11 +28,13 @@ export default function TributeComposer({ dialogRef, formRef, sending, error, on
         <div className="compose-template-select" aria-label="Chọn mẫu thiệp">{DESIGNS.map((name, index) => <button key={name} type="button" disabled={sending} aria-label={`Mẫu thiệp ${index + 1}`} aria-pressed={index === design} onClick={() => setDesign(index)} className={`compose-template-dot ${index === design ? 'is-active' : ''}`} data-design={name} />)}<span>Mẫu {design + 1} / {DESIGNS.length}</span></div>
       </section>
       <form ref={formRef} className="compose-form" onSubmit={onSubmit} onReset={() => { setDraft(empty); setDesign(0); }}>
+        <input type="hidden" name="image" value={draft.image} />
         <input type="hidden" name="design" value={DESIGNS[design]} />
         <fieldset disabled={sending}>
           <div className="compose-field-group"><label htmlFor="compose-teacher">Gửi đến Thầy/Cô:</label><input id="compose-teacher" name="teacher" value={draft.teacher} onChange={change} maxLength={100} required placeholder="Tên thầy cô" autoComplete="off" /><label className="sr-only" htmlFor="compose-teacher-department">Đơn vị:</label><input id="compose-teacher-department" name="teacherDepartment" value={draft.teacherDepartment} onChange={change} maxLength={120} placeholder="Đơn vị:" autoComplete="off" /></div>
           <div className="compose-field-group"><label htmlFor="compose-message">Lời tri ân</label><textarea id="compose-message" name="message" value={draft.message} onChange={change} minLength={10} maxLength={2000} required rows={5} placeholder="Chia sẻ lời tri ân của bạn…" aria-describedby="compose-word-count" /><p id="compose-word-count" className={count > 100 ? 'compose-word-count over-limit' : 'compose-word-count'}>{count}/100 từ</p></div>
           <div className="compose-field-group"><label htmlFor="compose-sender">Người gửi</label><input id="compose-sender" name="sender" value={draft.sender} onChange={change} maxLength={70} required placeholder="Tên người gửi" autoComplete="name" /><label className="sr-only" htmlFor="compose-sender-department">Đơn vị người gửi</label><input id="compose-sender-department" name="senderDepartment" value={draft.senderDepartment} onChange={change} maxLength={120} placeholder="Đơn vị:" autoComplete="off" /></div>
+          <div className="compose-field-group"><label htmlFor="compose-image">Ảnh kỷ niệm (không bắt buộc)</label><input id="compose-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={chooseImage} /><p className="compose-note">JPG, PNG hoặc WebP · Tối đa 1 MB</p>{draft.image && <button type="button" className="text-sm text-rose underline" onClick={() => { setDraft(old => ({ ...old, image: '' })); document.getElementById('compose-image').value = ''; }}>Xóa ảnh</button>}{imageError && <p role="alert" className="compose-error">{imageError}</p>}</div>
         </fieldset>
         <p className="compose-note">Bài sẽ hiển thị sau khi được duyệt.</p>
         {count > 100 && <p role="alert" className="compose-error">Bạn vui lòng rút gọn lời tri ân còn tối đa 100 từ.</p>}

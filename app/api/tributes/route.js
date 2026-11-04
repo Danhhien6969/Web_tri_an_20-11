@@ -24,7 +24,7 @@ export async function POST(request) {
     while (true) {
       const { done, value } = await reader.read(); if (done) break;
       size += value.byteLength;
-      if (size > 16384) { await reader.cancel(); return json({ error: 'Nội dung gửi quá lớn.' }, 413); }
+      if (size > 1500000) { await reader.cancel(); return json({ error: 'Nội dung gửi quá lớn.' }, 413); }
       chunks.push(value);
     }
     body = JSON.parse(Buffer.concat(chunks).toString('utf8'));

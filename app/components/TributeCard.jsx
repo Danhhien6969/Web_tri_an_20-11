@@ -6,6 +6,7 @@ export default function TributeCard({ item, preview = false, expanded = false })
     <div className="tribute-card-brand"><div className="tribute-card-logo-group"><img src="/logo-doan.png" width="527" height="558" alt="Đoàn Thanh niên" /><img src="/logo-hutech.png" width="515" height="595" alt="HUTECH University" /><img src="/logo-hoi.png" width="554" height="554" alt="Hội Sinh viên Việt Nam" /></div></div>
     <div className="tribute-card-paper">
       <p className={`tribute-card-message ${preview || expanded ? '' : 'line-clamp-5'}`}>{item.message || 'Lời tri ân của bạn…'}</p>
+      {item.image && <img src={item.image} alt="Ảnh kỷ niệm kèm lời tri ân" className="mb-5 max-h-64 w-full rounded-lg object-contain" />}
       <div className="tribute-card-recipient">Gửi đến Thầy/Cô: <strong>{item.teacher || ''}</strong>{item.teacherDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.teacherDepartment}</span>}</div>
       <div className="tribute-card-sender"><span className="tribute-card-avatar">{item.sender?.charAt(0).toUpperCase() || ''}</span><span>{item.sender || ''}{item.senderDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.senderDepartment}</span>}</span></div>
     </div>
