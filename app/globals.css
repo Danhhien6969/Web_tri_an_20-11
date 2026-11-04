@@ -165,5 +165,5 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 
 .home-backdrop { position: absolute; inset: 0 0 auto; height: 920px; overflow: hidden; pointer-events: none; user-select: none; z-index: 0; }
 .backdrop-branch { position: absolute; left: 0; top: 140px; width: min(17vw, 290px); opacity: .65; }
-.backdrop-book { position: absolute; right: 1.5%; top: 650px; width: min(15vw, 260px); opacity: .68; }
+.backdrop-book { position: absolute; right: 1.5%; top: 560px; width: min(15vw, 260px); opacity: .68; }
 @media (max-width: 1350px) { .home-backdrop { display: none; } }
