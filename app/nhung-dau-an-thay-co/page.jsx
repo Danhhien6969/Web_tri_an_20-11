@@ -1,6 +1,8 @@
+import TributeConfetti from '../components/TributeConfetti';
 export const metadata = { title: 'Những dấu ấn Thầy, Cô — Từ trái tim người học trò', description: 'Diễn đàn chia sẻ những câu chuyện về thầy cô. Thời gian nộp bài: 05/11/2026 – 20/11/2026.' };
 export default function ForumPage() {
   return <>
+    <TributeConfetti heartsOnly />
     <header className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-b border-[#eeddc7] px-6 py-5"><a href="/" className="font-script text-3xl text-rose">Từ trái tim</a><nav aria-label="Điều hướng diễn đàn" className="flex flex-wrap gap-5 text-sm"><a href="/">Trang chủ</a><a href="/nhung-dau-an-thay-co" aria-current="page" className="font-semibold text-rose">Những dấu ấn Thầy, Cô</a><a href="/#loi-tri-an">Lời tri ân</a></nav></header>
     <main className="mx-auto max-w-[1240px] pb-16">
       <h1 className="sr-only">Những dấu ấn Thầy, Cô</h1>
