@@ -6,8 +6,8 @@ export default function TributeCard({ item, preview = false, expanded = false })
     <div className="tribute-card-brand">Từ trái tim</div>
     <div className="tribute-card-paper">
       <p className={`tribute-card-message ${preview || expanded ? '' : 'line-clamp-5'}`}>{item.message || 'Lời tri ân của bạn…'}</p>
-      <div className="tribute-card-recipient">Gửi đến: <strong>{item.teacher || ''}</strong>{item.teacherDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Khoa / Viện: {item.teacherDepartment}</span>}</div>
-      <div className="tribute-card-sender"><span className="tribute-card-avatar">{item.sender?.charAt(0).toUpperCase() || ''}</span><span>{item.sender || ''}{item.senderDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Khoa / Viện: {item.senderDepartment}</span>}</span></div>
+      <div className="tribute-card-recipient">Gửi đến Thầy/Cô: <strong>{item.teacher || ''}</strong>{item.teacherDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.teacherDepartment}</span>}</div>
+      <div className="tribute-card-sender"><span className="tribute-card-avatar">{item.sender?.charAt(0).toUpperCase() || ''}</span><span>{item.sender || ''}{item.senderDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.senderDepartment}</span>}</span></div>
     </div>
   </div>;
 }

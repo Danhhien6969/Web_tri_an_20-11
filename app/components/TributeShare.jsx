@@ -32,8 +32,8 @@ export default function TributeShare({ item }) {
         }
       }
       wrap(item.message); const messageLines = [...lines]; lines.length = 0;
-      wrap(`Gửi đến: ${item.teacher}`); if (item.teacherDepartment) wrap(`Khoa / Viện: ${item.teacherDepartment}`);
-      wrap(`Người gửi: ${item.sender}`); if (item.senderDepartment) wrap(`Khoa / Viện: ${item.senderDepartment}`);
+      wrap(`Gửi đến Thầy/Cô: ${item.teacher}`); if (item.teacherDepartment) wrap(`Đơn vị: ${item.teacherDepartment}`);
+      wrap(`Người gửi: ${item.sender}`); if (item.senderDepartment) wrap(`Đơn vị: ${item.senderDepartment}`);
       canvas.height = 360 + (messageLines.length + lines.length) * 44;
       const gradient = ctx.createLinearGradient(0, 0, 1200, canvas.height); gradient.addColorStop(0, '#fffdf2'); gradient.addColorStop(1, '#ffe69b'); ctx.fillStyle = gradient; ctx.fillRect(0, 0, 1200, canvas.height);
       ctx.fillStyle = '#fffdf8'; ctx.fillRect(55, 150, 1090, canvas.height - 205);
