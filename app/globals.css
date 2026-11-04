@@ -206,3 +206,5 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 @media(max-width:600px) { .forum-story-reader { padding:clamp(110px,30vw,180px) 12px 16px; border-radius:16px; } .forum-story-paper { padding:20px 16px; } .forum-story-paper h2 { font-size:24px; } .forum-story-close { margin-right:0; } }
 
 .backdrop-branch-right { left:auto; right:0; transform:scaleX(-1); }
+
+.backdrop-book-left { left:1.5%; right:auto; transform:scaleX(-1); }
