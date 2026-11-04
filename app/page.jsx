@@ -1,4 +1,5 @@
 'use client';
+import ForumEntries from './components/ForumEntries';
 import HomeBackdrop from './components/HomeBackdrop';
 import { useEffect, useRef, useState } from 'react';
 import TributeConfetti from './components/TributeConfetti';
@@ -109,6 +110,7 @@ export default function Home() {
         {!loading && !error && pages > 1 && <nav aria-label="Phân trang" className="mt-8 flex items-center justify-center gap-5 text-xs"><button className={button} disabled={page <= 1} onClick={() => setPage(p => p - 1)}>← Trước</button><span>Trang {page} / {pages}</span><button className={button} disabled={page >= pages} onClick={() => setPage(p => p + 1)}>Sau →</button></nav>}
       </section>
       <section className="mx-5 mb-10 rounded-xl bg-gold/70 px-5 py-12 text-center md:mx-7"><span className="text-3xl text-rose" aria-hidden="true">♡</span><p className="my-5 font-display text-3xl leading-snug">Dù đi muôn phương,<br /><em className="text-rose">vẫn nhớ một mái trường.</em></p><button className={button} onClick={openForm}>Gửi đến thầy cô một lời cảm ơn ↗</button></section>
+      <ForumEntries />
     </main>
     <footer className="mx-auto flex max-w-[1184px] flex-wrap items-center justify-between gap-6 border-t border-[#edddc2] px-5 py-9 text-xs"><Brand /><p className="leading-6">GỬI ĐẾN THẦY CÔ!<br /><span className="text-[#aa8970]">Chào mừng ngày Nhà giáo Việt Nam 20/11</span></p><a href="#">Về đầu trang ↑</a></footer>
     <TributeComposer dialogRef={formDialog} formRef={form} sending={sending} error={formError} onSubmit={sendTribute} />
