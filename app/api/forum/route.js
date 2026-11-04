@@ -15,6 +15,14 @@ export async function POST(request) {
     if (!['left','center','right','justify'].includes(alignment) || !['#60362c','#dc2626','#1565c0','#ca8a04'].includes(textColor)) return json({ error: 'Định dạng văn bản không hợp lệ.' }, 400);
     data.alignment = alignment; data.textColor = textColor;
     const image = form.get('image'); if (!image || !['image/jpeg','image/png','image/webp'].includes(image.type) || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);
+    const articleImage = form.get('articleImage');
+    if (articleImage?.size) {
+      if (!['image/jpeg','image/png','image/webp'].includes(articleImage.type) || articleImage.size > 2 * 1024 * 1024 || articleImage.size + image.size > 3 * 1024 * 1024) return json({ error: 'Ảnh minh họa tối đa 2 MB; tổng hai ảnh tối đa 3 MB.' }, 400);
+      const bytes = Buffer.from(await articleImage.arrayBuffer());
+      const valid = articleImage.type === 'image/png' ? bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : articleImage.type === 'image/jpeg' ? bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255 : bytes.toString('ascii',0,4) === 'RIFF' && bytes.toString('ascii',8,12) === 'WEBP';
+      if (!valid) return json({ error: 'Ảnh minh họa không hợp lệ.' }, 400);
+      data.articleImage = bytes; data.articleImageType = articleImage.type;
+    }
     const db = await getDatabase();
     const bucket = Math.floor(Date.now() / 60000); const window = await db.collection('write_windows').findOneAndUpdate({ _id: `forum:${bucket}` }, { $inc: { count: 1 }, $setOnInsert: { expiresAt: new Date((bucket + 2) * 60000) } }, { upsert: true, returnDocument: 'after' });
     if (window.count > 10) return json({ error: 'Vui lòng thử lại sau một phút.' }, 429);
