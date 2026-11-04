@@ -24,6 +24,15 @@ test('faculty/institute is optional, trimmed and restricted to plain text', () =
   assert.ok(validateTribute({ ...base, teacherDepartment: 'a'.repeat(121) }).error);
 });
 
+test('sender faculty/institute is optional, trimmed and restricted to plain text', () => {
+  const base = { sender: 'An', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
+  assert.equal(validateTribute({ ...base, senderDepartment: '  Viện Công nghệ  ' }).data.senderDepartment, 'Viện Công nghệ');
+  assert.equal(validateTribute(base).data.senderDepartment, undefined);
+  assert.equal(validateTribute({ ...base, senderDepartment: '' }).data.senderDepartment, '');
+  assert.ok(validateTribute({ ...base, senderDepartment: { $ne: null } }).error);
+  assert.ok(validateTribute({ ...base, senderDepartment: 'a'.repeat(121) }).error);
+});
+
 test('accepts trimmed Vietnamese data and excludes untrusted fields', () => {
   assert.deepEqual(validateTribute({ sender: '  Học trò ', teacher: ' Cô Lan ', message: ' Cảm ơn cô rất nhiều! ', role: 'admin' }).data,
     { sender: 'Học trò', teacher: 'Cô Lan', message: 'Cảm ơn cô rất nhiều!' });
