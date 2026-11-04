@@ -171,3 +171,5 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .backdrop-branch { height: auto; opacity: .85; }
 .backdrop-book { aspect-ratio: 2.25; overflow: hidden; opacity: .9; }
 .backdrop-book img { display: block; width: 100%; height: auto; transform: translateY(-30%); }
+
+.tribute-card-compact .tribute-card-message { min-height: 0; max-height: 5.7em; }
