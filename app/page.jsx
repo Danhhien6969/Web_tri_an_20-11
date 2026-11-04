@@ -84,7 +84,7 @@ export default function Home() {
       <Brand /><nav aria-label="Điều hướng chính" className="flex items-center gap-7 text-xs font-semibold"><a className="hidden text-rose md:block" href="#ky-uc">Ký ức thầy cô</a><a className="hidden md:block" href="#loi-tri-an">Lời tri ân</a><button className={button} onClick={openForm}>✎ &nbsp; Gửi lời tri ân</button></nav>
     </header>
     <main className="mx-auto max-w-[1240px]">
-      <section className="mx-auto w-full max-w-[960px] overflow-hidden md:rounded-b-xl" aria-label="Từ trái tim người học trò gửi đến thầy cô">
+      <section className="mx-auto w-full overflow-hidden md:rounded-b-xl" aria-label="Từ trái tim người học trò gửi đến thầy cô">
         <img src="/banner.png" width="6773" height="3716" alt="Từ trái tim người học trò gửi đến thầy cô! Happy Teachers’ Day 20.11" className="h-auto w-full" fetchPriority="high" />
         <a href="#loi-tri-an" className="flex items-center justify-between bg-gold/70 px-6 py-3 text-[10px] tracking-wide">Khám phá những lời yêu thương <span className="text-2xl text-rose">↓</span></a>
       </section>
