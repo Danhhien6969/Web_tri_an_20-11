@@ -182,3 +182,16 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 @media(max-width:1100px) { .tribute-carousel-item { flex-basis:calc((100% - 32px)/3); } }
 @media(max-width:700px) { .tribute-carousel-item { flex-basis:calc((100% - 16px)/2); } }
 @media(max-width:480px) { .tribute-carousel-item { flex-basis:88%; } }
+/* Short summaries in the five-card carousel; full details remain in the reader. */
+.tribute-carousel { align-items:stretch; }
+.tribute-carousel-item { display:flex; }
+.tribute-carousel .tribute-card-frame { width:100%; height:auto; }
+.tribute-carousel .tribute-card-brand { margin-bottom:8px; }
+.tribute-carousel .tribute-card-paper { padding:12px; }
+.tribute-carousel .tribute-card-message { height:4.95em; max-height:4.95em; margin-bottom:10px; font-size:13px; line-height:1.65; }
+.tribute-carousel .tribute-card-paper > span { font-size:11px; margin-bottom:12px; }
+.tribute-carousel .tribute-card-recipient { margin-top:0; padding:10px 0; font-size:11px; }
+.tribute-carousel .tribute-card-recipient > span,
+.tribute-carousel .tribute-card-sender > span > span { display:none; }
+.tribute-carousel .tribute-card-sender { min-height:36px; padding-top:9px; gap:8px; font-size:11px; }
+.tribute-carousel .tribute-card-avatar { width:25px; height:25px; }
