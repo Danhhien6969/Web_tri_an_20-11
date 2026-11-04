@@ -1,17 +1,17 @@
 import TributeConfetti from '../components/TributeConfetti';
-export const metadata = { title: 'Những dấu ấn Thầy, Cô — Từ trái tim người học trò', description: 'Diễn đàn chia sẻ những câu chuyện về thầy cô. Thời gian nộp bài: 05/11/2026 – 20/11/2026.' };
+export const metadata = { title: 'Những dấu ấn cùng Thầy, Cô — Từ trái tim người học trò', description: 'Diễn đàn chia sẻ những câu chuyện về thầy cô. Thời gian nộp bài: 05/11/2026 – 20/11/2026.' };
 export default function ForumPage() {
   return <>
     <TributeConfetti heartsOnly />
-    <header className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-b border-[#eeddc7] px-6 py-5"><a href="/" className="font-script text-3xl text-rose">Từ trái tim</a><nav aria-label="Điều hướng diễn đàn" className="flex flex-wrap gap-5 text-sm"><a href="/">Trang chủ</a><a href="/nhung-dau-an-thay-co" aria-current="page" className="font-semibold text-rose">Những dấu ấn Thầy, Cô</a><a href="/#loi-tri-an">Lời tri ân</a></nav></header>
+    <header className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-b border-[#eeddc7] px-6 py-5"><a href="/" className="font-script text-3xl text-rose">Từ trái tim</a><nav aria-label="Điều hướng diễn đàn" className="flex flex-wrap gap-5 text-sm"><a href="/">Trang chủ</a><a href="/nhung-dau-an-thay-co" aria-current="page" className="font-semibold text-rose">Những dấu ấn cùng Thầy, Cô</a><a href="/#loi-tri-an">Lời tri ân</a></nav></header>
     <main className="mx-auto max-w-[1240px] pb-16">
-      <h1 className="sr-only">Những dấu ấn Thầy, Cô</h1>
+      <h1 className="sr-only">Những dấu ấn cùng Thầy, Cô</h1>
       <img src="/forum-poster.png" width="8677" height="2901" alt="Từ trái tim người học trò gửi đến Thầy Cô. Nhận bài từ 05/11 đến 20/11, tất cả tác giả, bài viết tối đa 1.500 từ." className="block h-auto w-full" fetchPriority="high" />
       <section className="px-6 py-12 text-center md:px-16 md:py-16" aria-labelledby="forum-info">
-        <span className="text-xs font-semibold tracking-widest text-[#be7660]">NHỮNG DẤU ẤN THẦY, CÔ</span>
+        <span className="text-xs font-semibold tracking-widest text-[#be7660]">NHỮNG DẤU ẤN CÙNG THẦY, CÔ</span>
         <h2 id="forum-info" className="mt-4 mb-7 font-display text-3xl text-rose md:text-4xl">Thông tin diễn đàn</h2>
         <div className="mx-auto max-w-4xl space-y-4 text-left text-sm leading-8 text-[#60362c] md:text-base">
-          <p>Diễn đàn “Những dấu ấn Thầy, Cô” là nơi chia sẻ những câu chuyện chân thực và kỷ niệm đáng nhớ về người thầy, người cô đã để lại dấu ấn trong cuộc đời mỗi người học trò.</p>
+          <p>Diễn đàn “Những dấu ấn cùng Thầy, Cô” là nơi chia sẻ những câu chuyện chân thực và kỷ niệm đáng nhớ về người thầy, người cô đã để lại dấu ấn trong cuộc đời mỗi người học trò.</p>
           <p>Một bài học mở ra cách nhìn mới, một lời động viên đúng lúc hay sự tận tâm qua từng buổi học đều có thể trở thành câu chuyện để gửi gắm lòng biết ơn. Qua những trải nghiệm của người viết, diễn đàn tôn vinh sự cống hiến của thầy cô và lan tỏa những điều đẹp đẽ trong tình thầy trò.</p>
           <p>Hãy kể lại dấu ấn của thầy cô bằng câu chuyện của chính bạn — như một lời cảm ơn nhân ngày Nhà giáo Việt Nam 20/11.</p>
         </div>
