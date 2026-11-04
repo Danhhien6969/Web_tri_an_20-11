@@ -162,3 +162,14 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .registration-form-heading h2 { margin-top: 10px; font-family: var(--font-serif), Georgia, serif; font-size: 28px; color: #693e32; }
 .registration-form-heading p { margin-top: 7px; font-size: 12px; line-height: 1.8; color: #9a806d; }
 @media (max-width: 767px) { .registration-tree { width: 150px; margin: 12px auto; } .registration-intro { padding: 20px; } .registration-quote { margin-bottom: 12px; } .registration-paper { padding: 20px 16px; } }
+
+.home-ornaments { pointer-events: none; position: absolute; inset: 0 0 auto; height: 900px; overflow: hidden; z-index: 0; user-select: none; }
+.home-ornament { position: absolute; top: 170px; width: clamp(100px, calc((100vw - 1020px) / 2), 190px); opacity: .8; }
+.home-ornament-left { left: max(8px, calc((100vw - 1640px) / 2)); }
+.home-ornament-right { right: max(8px, calc((100vw - 1640px) / 2)); top: 245px; }
+.home-ornament svg { display: block; width: 100%; }
+.home-ornament-right svg { transform: scaleX(-1); }
+.home-ornament p { text-align: center; font-size: 11px; line-height: 2; color: #ad8266; }
+.home-ornament p em { font-family: var(--font-handwriting), cursive; font-size: 21px; color: #ce7762; }
+.ornament-date { display: block; text-align: center; margin-top: 18px; font-size: 11px; letter-spacing: .35em; color: #c4a57b; }
+@media (max-width: 1350px) { .home-ornaments { display: none; } }
