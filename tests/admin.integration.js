@@ -1,3 +1,4 @@
+import { GET as moderationCounts } from '../app/api/admin/moderation/route.js';
 import { GET as forumAdminList } from '../app/api/admin/forum/route.js';
 import { PATCH as forumModerate } from '../app/api/admin/forum/[id]/route.js';
 import { GET as forumPublicList } from '../app/api/forum/route.js';
@@ -29,6 +30,10 @@ test('admin authentication, moderation, CSRF, session expiry and password revoca
     assert.equal(logged.status, 200); assert.match(logged.headers.get('set-cookie'), /HttpOnly/); assert.match(logged.headers.get('set-cookie'), /SameSite=Strict/);
     const cookie = logged.headers.get('set-cookie').split(';')[0];
     const story = await db.collection('forum_entries').insertOne({title:'Câu chuyện thử nghiệm',name:'Tác giả',content:'Một kỷ niệm đáng nhớ về thầy cô.',status:'pending',createdAt:new Date(),email:'private@example.com',phone:'private',image:Buffer.from('test')});
+    assert.equal((await moderationCounts(req('/api/admin/moderation'))).status,401);
+    const liveCounts=await moderationCounts(req('/api/admin/moderation','GET',undefined,cookie));
+    assert.equal(liveCounts.headers.get('cache-control'),'no-store');
+    assert.equal((await liveCounts.json()).forum.pending,1);
     const storyContext={params:Promise.resolve({id:story.insertedId.toString()})};
     assert.equal((await forumAdminList(req('/api/admin/forum'))).status,401);
     assert.equal((await (await forumPublicList(req('/api/forum'))).json()).items.length,0);

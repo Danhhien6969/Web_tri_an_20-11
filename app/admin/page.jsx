@@ -6,6 +6,9 @@ const input = 'mt-2 w-full rounded-lg border border-stone-300 bg-white p-3 text-
 const secondary = 'rounded-lg border border-stone-300 bg-white px-3 py-2 text-xs font-semibold disabled:opacity-50';
 const labels = { published: 'Đã đăng', pending: 'Chờ duyệt', hidden: 'Đã ẩn' };
 export default function Admin() {
+  const [pendingCounts,setPendingCounts] = useState({tributes:0,forum:0});
+  const [syncError,setSyncError] = useState(false);
+  const moderationVersion = useRef(null);
   const [section,setSection] = useState('tributes');
   const [user, setUser] = useState(null); const [checking, setChecking] = useState(true);
   const [error, setError] = useState(''); const [notice, setNotice] = useState('');
@@ -40,6 +43,28 @@ export default function Admin() {
     }, 250);
     return () => { clearTimeout(timer); controller.abort(); };
   }, [user, q, status, page, revision, section]);
+  useEffect(() => {
+    if (!user) { moderationVersion.current=null; return; }
+    const controller=new AbortController(); let timer; let running=false;
+    async function refresh() {
+      if(running || document.hidden || controller.signal.aborted) return;
+      running=true;
+      try {
+        const response=await fetch('/api/admin/moderation',{cache:'no-store',signal:controller.signal});
+        if(response.status===401){setUser(null);setItems([]);editor.current?.close();passwordDialog.current?.close();return;}
+        if(!response.ok) throw Error();
+        const data=await response.json(); if(controller.signal.aborted)return;
+        setPendingCounts({tributes:data.tributes.pending,forum:data.forum.pending});setSyncError(false);
+        const version=data.tributes.version+'|'+data.forum.version;
+        if(moderationVersion.current !== null && moderationVersion.current !== version) setRevision(x=>x+1);
+        moderationVersion.current=version;
+      }catch(e){if(!controller.signal.aborted)setSyncError(true);}
+      finally{running=false;}
+    }
+    const visible=()=>{if(!document.hidden)refresh();};
+    refresh();timer=setInterval(refresh,5000);document.addEventListener('visibilitychange',visible);window.addEventListener('focus',visible);
+    return()=>{controller.abort();clearInterval(timer);document.removeEventListener('visibilitychange',visible);window.removeEventListener('focus',visible);};
+  },[user]);
   async function login(e) {
     e.preventDefault(); setBusy(true); setError('');
     try { const data = await api('/api/admin/session', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))) }); setUser(data.username); }
@@ -74,8 +99,8 @@ export default function Admin() {
     {notice && <p role="status" className="mb-5 rounded-lg border border-green-200 bg-green-50 p-4 text-sm">{notice}</p>}
     {error && <p role="alert" className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm">{error} {user && <button className="ml-3 underline" onClick={() => setRevision(x => x + 1)}>Thử lại</button>}</p>}
     {!user ? <form onSubmit={login} className="mx-auto mt-16 max-w-md rounded-2xl border border-amber-200 bg-white p-8 shadow-sm"><h1 className="font-display text-3xl">Đăng nhập Admin</h1><p className="my-4 text-sm text-stone-500">Quản lý những lời tri ân gửi đến thầy cô.</p><label className="mt-5 block text-sm">Tên đăng nhập<input className={input} name="username" autoComplete="username" required maxLength={50} /></label><label className="mt-5 block text-sm">Mật khẩu<input className={input} name="password" type="password" autoComplete="current-password" required maxLength={128} /></label><button className={`${primary} mt-6 w-full`} disabled={busy}>{busy ? 'Đang đăng nhập…' : 'Đăng nhập'}</button></form> : <>
-      <nav aria-label="Danh mục duyệt bài" className="mb-7 flex flex-wrap gap-3">{[['tributes','Duyệt lời tri ân'],['forum','Duyệt Những dấu ấn cùng Thầy/Cô']].map(([key,label])=><button key={key} aria-pressed={section===key} onClick={()=>{setSection(key);setError('');setNotice('');}} className={section===key ? primary : secondary}>{label}</button>)}</nav>
-      {section === 'forum' ? <AdminForum api={api} /> : <>
+      <nav aria-label="Danh mục duyệt bài" className="mb-7 flex flex-wrap gap-3">{[['tributes','Duyệt lời tri ân'],['forum','Duyệt Những dấu ấn cùng Thầy/Cô']].map(([key,label])=><button key={key} aria-pressed={section===key} onClick={()=>{setSection(key);setError('');setNotice('');}} className={section===key ? primary : secondary}>{label}<span aria-label={`${pendingCounts[key]} bài chờ duyệt`} className="ml-2 inline-flex min-w-6 justify-center rounded-full bg-amber-100 px-2 py-0.5 text-xs text-rose">{pendingCounts[key]}</span></button>)}</nav><p role="status" className="mb-5 text-xs text-stone-500">{syncError ? 'Tạm mất kết nối cập nhật. Đang tự thử lại…' : 'Tự động cập nhật bài chờ duyệt mỗi 5 giây.'}</p>
+      {section === 'forum' ? <AdminForum api={api} refreshKey={revision} /> : <>
       <div className="mb-7 grid grid-cols-3 gap-3">{Object.entries(labels).map(([key, label]) => <button onClick={() => { setStatus(key); setPage(1); }} key={key} className="rounded-xl border border-amber-200 bg-white p-5 text-left"><span className="block text-xs text-stone-500">{label}</span><b className="mt-2 block text-3xl text-rose">{counts[key] || 0}</b></button>)}</div>
       <div className="mb-5 flex flex-wrap items-center gap-3"><input className={`${input} mt-0 flex-1 min-w-48`} aria-label="Tìm bài viết" placeholder="Tìm người gửi, thầy cô, nội dung…" value={q} maxLength={100} onChange={e => { setQ(e.target.value); setPage(1); }} /><select aria-label="Lọc trạng thái" className={`${input} mt-0 w-auto`} value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}><option value="all">Tất cả bài viết</option>{Object.entries(labels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select><button className={primary} onClick={() => openEditor()}>+ Đăng bài mới</button></div>
       {loading ? <p className="py-12 text-center" role="status">Đang tải bài viết…</p> : <div className="space-y-4">{items.map(item => <article key={item.id} className="rounded-xl border border-amber-200 bg-white p-5 md:p-6"><div className="mb-4 flex flex-wrap items-start justify-between gap-3"><div><h2 className="font-semibold">Gửi đến Thầy/Cô: {item.teacher}</h2>{item.teacherDepartment && <p className="mt-1 text-xs text-stone-500">Đơn vị: {item.teacherDepartment}</p>}<p className="mt-1 text-xs text-stone-500">{item.sender}{item.senderDepartment && <> ({item.senderDepartment})</>} · {new Date(item.createdAt).toLocaleString('vi-VN')}</p></div><span className={`rounded-full px-3 py-1 text-xs ${item.status === 'published' ? 'bg-green-100 text-green-800' : item.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'}`}>{labels[item.status]}</span></div><p className="whitespace-pre-wrap break-words text-sm leading-7">{item.message}</p>{item.image && <img src={item.image} alt="Ảnh kỷ niệm chờ duyệt" className="mt-4 max-h-64 max-w-full rounded-lg" />}{(item.senderEmail || item.recipientEmail) && <p className="mt-4 text-xs leading-6 text-stone-500">{item.senderEmail && <>Email người gửi: {item.senderEmail}<br /></>}{item.recipientEmail && <>Email người nhận: {item.recipientEmail}</>}</p>}<div className="mt-5 flex flex-wrap gap-2"><button className={secondary} disabled={busy} onClick={() => openEditor(item)}>Sửa bài</button>{item.status !== 'published' && <button className={secondary} disabled={busy} onClick={() => changeStatus(item, 'published')}>Duyệt / Hiển thị</button>}{item.status !== 'hidden' && <button className={secondary} disabled={busy} onClick={() => changeStatus(item, 'hidden')}>Ẩn bài</button>}</div></article>)}{!items.length && !error && <p className="py-12 text-center text-stone-500">Chưa có bài viết ở mục này.</p>}</div>}
