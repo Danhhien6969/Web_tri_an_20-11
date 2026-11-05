@@ -250,8 +250,8 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .gratitude-tree-leaf[aria-disabled="true"] { cursor:wait; }
 @media(max-width:600px) { .gratitude-tree-section { padding:30px 12px; } .gratitude-tree-canvas { margin-inline:-8px; } }
 
-/* Three rows of five cards, with a vertical scroll rail. */
-.tribute-carousel { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); grid-auto-rows:410px; gap:16px; max-height:1262px; overflow-x:hidden; overflow-y:auto; scroll-snap-type:y proximity; scrollbar-gutter:stable; padding:0 8px 0 0; }
+/* Two rows of five cards, with a vertical scroll rail. */
+.tribute-carousel { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); grid-auto-rows:410px; gap:16px; max-height:836px; overflow-x:hidden; overflow-y:auto; scroll-snap-type:y proximity; scrollbar-gutter:stable; padding:0 8px 0 0; }
 .tribute-carousel-item { width:100%; min-height:0; overflow:hidden; }
 .tribute-carousel .tribute-card-frame { height:100%; }
 .tribute-carousel .tribute-card-recipient strong { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
