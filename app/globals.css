@@ -111,7 +111,7 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 /* Background supplied for the tribute reading dialog. */
 .tribute-reader {
   background-color: #fff8ef;
-  background-image: url('/tribute-reader-background.png');
+  background-image: url('/tribute-reader-roses.png');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
