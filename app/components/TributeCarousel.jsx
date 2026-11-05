@@ -8,14 +8,14 @@ export default function TributeCarousel({ items, onOpen, onNextPage }) {
   function move(direction) {
     const el = rail.current;
     if (!el) return;
-    const end = el.scrollWidth - el.clientWidth;
-    if (direction > 0 && el.scrollLeft >= end - 4) {
+    const end = el.scrollHeight - el.clientHeight;
+    if (direction > 0 && el.scrollTop >= end - 4) {
       if (onNextPage) onNextPage();
-      el.scrollTo({ left: 0, behavior: 'smooth' });
-    } else el.scrollBy({ left: direction * (el.firstElementChild?.getBoundingClientRect().width + 16 || el.clientWidth), behavior: 'smooth' });
+      el.scrollTo({ top: 0, behavior: 'smooth' });
+    } else el.scrollBy({ top: direction * (el.firstElementChild?.getBoundingClientRect().height + 16 || el.clientHeight), behavior: 'smooth' });
   }
   useEffect(() => {
-    rail.current?.scrollTo({ left: 0 });
+    rail.current?.scrollTo({ top: 0 });
   }, [items]);
   useEffect(() => {
     if (!auto || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -26,6 +26,6 @@ export default function TributeCarousel({ items, onOpen, onNextPage }) {
   }, [auto, items, onNextPage]);
   return <section aria-label="Các lời tri ân" onMouseEnter={() => { paused.current = true; }} onMouseLeave={() => { paused.current = false; }} onFocusCapture={() => { paused.current = true; }} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget)) paused.current = false; }}>
     <div ref={rail} className="tribute-carousel">{items.map(item => <button key={item.id} onClick={() => onOpen(item)} className="tribute-carousel-item text-left"><TributeCard item={item} /></button>)}</div>
-    <div className="mt-5 flex justify-center gap-3 text-xs"><button type="button" className="rounded-lg border border-amber-200 px-4 py-2" onClick={() => move(-1)} aria-label="Bài trước">←</button><button type="button" className="rounded-lg border border-amber-200 px-4 py-2" onClick={() => setAuto(x => !x)}>{auto ? 'Tạm dừng' : 'Tự động chuyển'}</button><button type="button" className="rounded-lg border border-amber-200 px-4 py-2" onClick={() => move(1)} aria-label="Bài tiếp theo">→</button></div>
+    <div className="mt-5 flex justify-center gap-3 text-xs"><button type="button" className="rounded-lg border border-amber-200 px-4 py-2" onClick={() => move(-1)} aria-label="Cuộn lên">↑</button><button type="button" className="rounded-lg border border-amber-200 px-4 py-2" onClick={() => setAuto(x => !x)}>{auto ? 'Tạm dừng' : 'Tự động chuyển'}</button><button type="button" className="rounded-lg border border-amber-200 px-4 py-2" onClick={() => move(1)} aria-label="Cuộn xuống">↓</button></div>
   </section>;
 }

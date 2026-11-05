@@ -29,9 +29,9 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
     const beforeApproval = await (await GET(new Request('http://localhost/api/tributes'))).json();
     assert.equal(beforeApproval.total, 0);
     await db.collection('tributes').updateOne({ _id: stored._id }, { $set: { status: 'published' } });
-    await db.collection('tributes').insertMany(Array.from({ length: 12 }, (_, i) => ({ sender: `Bạn ${i}`, teacher: 'Thầy Minh', message: 'Một lời cảm ơn từ học trò.', createdAt: new Date(Date.now() - i - 1000) })));
+    await db.collection('tributes').insertMany(Array.from({ length: 30 }, (_, i) => ({ sender: `Bạn ${i}`, teacher: 'Thầy Minh', message: 'Một lời cảm ơn từ học trò.', createdAt: new Date(Date.now() - i - 1000) })));
     const list = await (await GET(new Request('http://localhost/api/tributes'))).json();
-    assert.equal(list.total, 13); assert.equal(list.items.length, 12); assert.equal(list.items[0].id, created.id);
+    assert.equal(list.total, 31); assert.equal(list.items.length, 30); assert.equal(list.items[0].id, created.id);
     assert.equal(list.items[0].design, 'blush');
     assert.equal(list.items[0].teacherDepartment, sample.teacherDepartment);
     assert.equal(list.items[0].senderDepartment, sample.senderDepartment);
