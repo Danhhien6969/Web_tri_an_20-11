@@ -211,3 +211,7 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 
 .backdrop-branch { transform:scaleX(-1); }
 .backdrop-branch-right { transform:none; }
+
+/* Roses frame the upper outer corners, with leaves hanging down. */
+.backdrop-branch { transform:rotate(180deg); }
+.backdrop-branch-right { transform:scaleY(-1); }
