@@ -1,3 +1,4 @@
+import { normalizeForumRuns } from '../../../lib/forum-format.js';
 import { forumVoteCounts } from '../../../lib/forum-votes.js';
 import { getDatabase } from '../../../lib/mongodb.js';
 export const runtime = 'nodejs';
@@ -17,9 +18,9 @@ export async function POST(request) {
     data.alignment = alignment; data.textColor = textColor;
     if (form.get('contentRuns')) {
       let runs; try { runs = JSON.parse(form.get('contentRuns')); } catch { return json({ error: 'Định dạng không hợp lệ.' }, 400); }
-      const colors = ['rgb(0, 0, 0)','rgb(220, 38, 38)','rgb(21, 101, 192)','rgb(202, 138, 4)'];
-      if (!Array.isArray(runs) || runs.length > 20000 || runs.some(r => !r || typeof r.text !== 'string' || !colors.includes(r.color) || typeof r.bold !== 'boolean') || runs.map(r => r.text).join('').trim().normalize('NFC') !== data.content) return json({ error: 'Định dạng nội dung không hợp lệ.' }, 400);
-      data.contentRuns = runs.map(({text,color,bold}) => ({text,color,bold}));
+      const normalized = normalizeForumRuns(runs, data.content);
+      if (!normalized) return json({ error: 'Nội dung và định dạng chưa đồng bộ. Vui lòng sửa một ký tự rồi gửi lại.' }, 400);
+      data.contentRuns = normalized;
     }
 
     const image = form.get('image'); if (!image || !['image/jpeg','image/png','image/webp'].includes(image.type) || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);

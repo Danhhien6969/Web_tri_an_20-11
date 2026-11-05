@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { normalizeForumColor } from '../../lib/forum-format.js';
 const colors = [['#dc2626','Đỏ'],['#1565c0','Xanh nước biển'],['#ca8a04','Vàng'],['#000000','Đen']];
 export default function ForumEditor({ value, onChange, disabled }) {
   const editor = useRef(null); const selection = useRef(null);
@@ -11,7 +12,7 @@ export default function ForumEditor({ value, onChange, disabled }) {
   function sync() {
     const result=[];
     function walk(node) {
-      if(node.nodeType===3) { const style=getComputedStyle(node.parentElement); result.push({ text:node.textContent, color:style.color, bold:Number(style.fontWeight)>=600 }); return; }
+      if(node.nodeType===3) { const style=getComputedStyle(node.parentElement); result.push({ text:node.textContent, color:normalizeForumColor(style.color), bold:Number(style.fontWeight)>=600 }); return; }
       if(node.nodeName==='BR') { result.push({text:'\n',color:'rgb(0, 0, 0)',bold:false}); return; }
       if(['DIV','P'].includes(node.nodeName) && result.length && !result.at(-1).text.endsWith('\n')) result.push({text:'\n',color:'rgb(0, 0, 0)',bold:false});
       node.childNodes.forEach(walk);
