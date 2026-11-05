@@ -10,3 +10,9 @@ test('normalizes browser color formats and preserves text and bold',()=>{
  assert.equal(normalizeForumRuns(runs,'Khác nội dung'),null);
  assert.equal(normalizeForumRuns([{text:'abc',bold:'yes'}],'abc'),null);
 });
+
+test('multipart CRLF and Unicode normalization preserve formatting',()=>{
+ const runs=[{text:'Cảm ơn\nThầy/Cô',color:'#dc2626',bold:true}];
+ assert.equal(normalizeForumRuns(runs,'Cảm ơn\r\nThầy/Cô')[0].bold,true);
+ assert.ok(normalizeForumRuns([{...runs[0],text:runs[0].text.normalize('NFD')}],'Cảm ơn\nThầy/Cô'));
+});

@@ -1,4 +1,4 @@
-import { normalizeForumRuns } from '../../../lib/forum-format.js';
+import { normalizeForumRuns, normalizeForumText } from '../../../lib/forum-format.js';
 import { forumVoteCounts } from '../../../lib/forum-votes.js';
 import { getDatabase } from '../../../lib/mongodb.js';
 export const runtime = 'nodejs';
@@ -10,8 +10,8 @@ export async function POST(request) {
     while (true) { const { done, value } = await reader.read(); if (done) break; size += value.length; if (size > 3500000) { await reader.cancel(); return json({ error: 'Dữ liệu quá lớn. Ảnh tối đa 3 MB.' }, 413); } chunks.push(value); }
     const form = await new Response(Buffer.concat(chunks), { headers: { 'Content-Type': request.headers.get('content-type') || '' } }).formData();
     const data = {};
-    for (const [key, max] of [['name',100],['phone',100],['email',254],['title',100],['content',20000]]) { const value = form.get(key); if (typeof value !== 'string' || !value.trim() || value.trim().length > max) return json({ error: 'Vui lòng kiểm tra thông tin bài viết.' }, 400); data[key] = value.trim().normalize('NFC'); }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || data.content.split(/\s+/u).length > 1500 || form.get('agreed') !== 'on') return json({ error: 'Kiểm tra email, giới hạn 1.500 từ và xác nhận đồng ý.' }, 400);
+    for (const [key, max] of [['name',100],['phone',100],['email',254],['title',Infinity],['content',Infinity]]) { const value = form.get(key); if (typeof value !== 'string' || !value.trim() || value.trim().length > max) return json({ error: 'Vui lòng kiểm tra thông tin bài viết.' }, 400); data[key] = normalizeForumText(value.trim()); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || form.get('agreed') !== 'on') return json({ error: 'Kiểm tra email và xác nhận đồng ý.' }, 400);
     const alignment = form.get('alignment') || 'left';
     const textColor = form.get('textColor') || '#60362c';
     if (!['left','center','right','justify'].includes(alignment) || !['#000000','#60362c','#dc2626','#1565c0','#ca8a04'].includes(textColor)) return json({ error: 'Định dạng văn bản không hợp lệ.' }, 400);
@@ -19,8 +19,8 @@ export async function POST(request) {
     if (form.get('contentRuns')) {
       let runs; try { runs = JSON.parse(form.get('contentRuns')); } catch { return json({ error: 'Định dạng không hợp lệ.' }, 400); }
       const normalized = normalizeForumRuns(runs, data.content);
-      if (!normalized) return json({ error: 'Nội dung và định dạng chưa đồng bộ. Vui lòng sửa một ký tự rồi gửi lại.' }, 400);
-      data.contentRuns = normalized;
+      // Keep the submitted text even if an older browser sends stale formatting.
+      data.contentRuns = normalized || [{text:data.content,color:'rgb(0, 0, 0)',bold:false}];
     }
 
     const image = form.get('image'); if (!image || !['image/jpeg','image/png','image/webp'].includes(image.type) || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);
