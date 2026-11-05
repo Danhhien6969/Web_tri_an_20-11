@@ -5,7 +5,7 @@ import HomeBackdrop from './components/HomeBackdrop';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import TributeConfetti from './components/TributeConfetti';
 import TributeComposer from './components/TributeComposer';
-import TributeCard from './components/TributeCard';
+import TributeLetter from './components/TributeLetter';
 import TributeCarousel from './components/TributeCarousel';
 import TributeShare from './components/TributeShare';
 import { listKey, loadTributes, readListCache, writeListCache } from '../lib/tribute-loader.js';
@@ -132,11 +132,11 @@ export default function Home() {
     </main>
     <footer className="mx-auto flex max-w-[1184px] flex-wrap items-center justify-between gap-6 border-t border-[#edddc2] px-5 py-9 text-xs"><Brand /><p className="leading-6">GỬI ĐẾN THẦY CÔ!<br /><span className="text-[#aa8970]">Chào mừng ngày Nhà giáo Việt Nam 20/11</span></p><a href="#">Về đầu trang ↑</a></footer>
     <TributeComposer dialogRef={formDialog} formRef={form} sending={sending} error={formError} onSubmit={sendTribute} />
-    <dialog ref={readDialog} className="tribute-reader" aria-label="Lời tri ân và chia sẻ">
+    <dialog ref={readDialog} className="tribute-reader tribute-reader-letter" aria-label="Lời tri ân và chia sẻ">
       <button className="reader-close" aria-label="Đóng" onClick={() => readDialog.current.close()}>×</button>
       {selected && <div className="reader-columns">
-        <div className="reader-card"><TributeCard item={selected} expanded /></div>
-        <div className="reader-actions"><button className="reader-compose" onClick={() => { readDialog.current.close(); openForm(); }}>✎ GỬI LỜI TRI ÂN CỦA TÔI</button><TributeShare key={selected.id} item={selected} /></div>
+        <TributeLetter item={selected} />
+        <div className="reader-actions"><TributeShare key={selected.id} item={selected} /><div className="letter-compose-prompt"><p>Một lời cảm ơn nhỏ, một niềm vui thật lớn.</p><button className="reader-compose" onClick={() => { readDialog.current.close(); openForm(); }}>✎ Viết lời tri ân của tôi</button></div></div>
       </div>}
     </dialog>
     {toast && <div role="status" className="fixed bottom-6 left-1/2 z-50 w-[90%] max-w-md -translate-x-1/2 rounded-xl bg-ink px-6 py-4 text-center text-xs leading-6 text-white shadow-lg">{toast}</div>}
