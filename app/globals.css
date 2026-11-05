@@ -232,3 +232,10 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .gratitude-intro-copy { position:relative; z-index:1; padding:15px 0; }
 .gratitude-intro-copy h1 { font-size:clamp(28px,3vw,44px); }
 @media(max-width:700px) { .gratitude-intro { grid-template-columns:1fr; gap:6px; } .gratitude-illustration { max-width:230px; } }
+/* Keep the introduction centred independently of its illustration. */
+@media(min-width:1000px) {
+ .gratitude-intro { display:block; min-height:360px; }
+ .gratitude-intro-copy { width:min(100%,760px); margin-inline:auto; }
+ .gratitude-illustration { position:absolute; left:0; top:50%; transform:translateY(-50%); width:clamp(150px,15vw,200px); }
+ .gratitude-intro-copy h1 { font-size:clamp(28px,2.6vw,38px); }
+}
