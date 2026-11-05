@@ -104,12 +104,15 @@ export default function Home() {
         <img src="/banner.png" width="6773" height="3716" alt="Từ trái tim người học trò gửi đến thầy cô! Happy Teachers’ Day 20.11" className="h-auto w-full" fetchPriority="high" />
         <a href="#loi-tri-an" className="flex items-center justify-between bg-gold/70 px-6 py-3 text-[10px] tracking-wide">Khám phá những lời yêu thương <span className="text-2xl text-rose">↓</span></a>
       </section>
-      <section id="ky-uc" className="relative overflow-hidden px-6 py-14 text-center md:py-20">
+      <section id="ky-uc" className="gratitude-intro relative overflow-hidden px-6 py-10 text-center md:py-14">
+        <div className="gratitude-illustration"><img src="/teachers-gratitude.png" width="800" height="1100" alt="Thầy cô cùng hoa và sách trong ngày tri ân" loading="lazy" /></div>
+        <div className="gratitude-intro-copy">
         <span className={eyebrow}>THÁNG 11 • MÙA TRI ÂN</span>
         <h1 className="my-5 font-display text-4xl leading-snug md:text-5xl">Có những lời cảm ơn,<br /><em className="text-rose">mãi còn trong tim.</em></h1>
         <p className="text-sm leading-7 text-[#90766a]">Một bài giảng, một lời động viên, một ánh mắt tin tưởng.<br className="hidden md:block" /> Có những điều nhỏ bé thầy cô trao, theo chúng ta suốt cuộc đời.</p>
         <button onClick={openForm} className="mt-6 text-xs font-semibold text-rose">Viết lời cảm ơn của bạn &nbsp; ↗</button>
-        <span aria-hidden="true" className="pointer-events-none absolute -right-5 bottom-5 text-[130px] text-amber-300/40 md:right-20">✿</span>
+        </div>
+        <span aria-hidden="true" className="pointer-events-none absolute -right-5 bottom-5 text-[90px] text-amber-300/40 md:right-5">✿</span>
       </section>
       <section id="loi-tri-an" className="border-t border-[#edddc2] bg-linear-to-b from-[#fff9e4] to-cream px-5 py-12 md:px-7">
         <div className="flex items-center justify-between gap-5"><div><span className={eyebrow}>TỪ TRÁI TIM NGƯỜI HỌC TRÒ</span><h2 className="my-3 font-display text-3xl">Danh sách lời tri ân</h2><p className="text-xs text-[#917867]">Mỗi lời nhắn là một đóa hoa dành tặng thầy cô.</p></div><button className={`${button} hidden md:block`} onClick={openForm}>✎ &nbsp; Gửi lời tri ân</button></div>

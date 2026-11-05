@@ -226,3 +226,9 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 
 .reader-card .tribute-card-frame { border-radius:18px; }
 .reader-card .tribute-card-paper { border-radius:14px; overflow:hidden; }
+.gratitude-intro { display:grid; grid-template-columns:minmax(220px, .7fr) minmax(0,1.7fr); align-items:center; gap:30px; }
+.gratitude-illustration { width:100%; max-width:320px; aspect-ratio:1.05; overflow:hidden; justify-self:center; }
+.gratitude-illustration img { display:block; width:100%; height:auto; transform:translateY(-17%); }
+.gratitude-intro-copy { position:relative; z-index:1; padding:15px 0; }
+.gratitude-intro-copy h1 { font-size:clamp(28px,3vw,44px); }
+@media(max-width:700px) { .gratitude-intro { grid-template-columns:1fr; gap:6px; } .gratitude-illustration { max-width:230px; } }
