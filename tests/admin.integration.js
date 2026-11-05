@@ -1,3 +1,4 @@
+import { GET as tributeTree } from '../app/api/tributes/tree/route.js';
 import { castForumVote } from '../lib/forum-votes.js';
 import { GET as moderationCounts } from '../app/api/admin/moderation/route.js';
 import { GET as forumAdminList } from '../app/api/admin/forum/route.js';
@@ -67,7 +68,11 @@ test('admin authentication, moderation, CSRF, session expiry and password revoca
     assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { status: 'published' }, cookie), context)).status, 200);
     assert.equal((await (await publicList(req('/api/tributes'))).json()).total, 1);
     assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { ...sample, message: 'Nội dung đã sửa bởi quản trị viên.' }, cookie), context)).status, 200);
+    const tree=await (await tributeTree(req('/api/tributes/tree'))).json(); assert.equal(tree.total,1);
+    const random=await (await tributeTree(req('/api/tributes/tree?random=1'))).json();assert.equal(random.item.id,id);assert.equal(random.item.status,undefined);
     assert.equal((await edit(req(`/api/admin/tributes/${id}`, 'PATCH', { status: 'hidden' }, cookie), context)).status, 200);
+    assert.equal((await (await tributeTree(req('/api/tributes/tree'))).json()).total,0);
+    assert.equal((await tributeTree(req('/api/tributes/tree?random=1'))).status,404);
     assert.equal((await (await publicList(req('/api/tributes'))).json()).total, 0);
     const created = await create(req('/api/admin/tributes', 'POST', { ...sample, status: 'published' }, cookie));
     assert.equal(created.status, 201);

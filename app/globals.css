@@ -242,3 +242,10 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
  .gratitude-intro-copy p br { display:none; }
  .gratitude-intro > span[aria-hidden] { position:static; justify-self:center; align-self:center; font-size:110px; line-height:1; }
 }
+.gratitude-tree-section { padding:40px 24px 48px; text-align:center; background:radial-gradient(ellipse at 50% 42%,#ecf3da99,transparent 65%); }
+.gratitude-tree-canvas { max-width:900px; margin:0 auto; }
+.gratitude-tree-canvas svg { display:block; width:100%; height:auto; }
+.gratitude-tree-leaf { cursor:pointer; transition:filter .2s; outline:none; }
+.gratitude-tree-leaf:hover,.gratitude-tree-leaf:focus { filter:drop-shadow(0 0 6px #d7a74b); }
+.gratitude-tree-leaf[aria-disabled="true"] { cursor:wait; }
+@media(max-width:600px) { .gratitude-tree-section { padding:30px 12px; } .gratitude-tree-canvas { margin-inline:-8px; } }

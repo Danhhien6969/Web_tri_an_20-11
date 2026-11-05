@@ -1,4 +1,5 @@
 'use client';
+import GratitudeTree from './components/GratitudeTree';
 import ForumEntries from './components/ForumEntries';
 import HomeBackdrop from './components/HomeBackdrop';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -114,6 +115,7 @@ export default function Home() {
         </div>
         <span aria-hidden="true" className="pointer-events-none absolute -right-5 bottom-5 text-[90px] text-amber-300/40 md:right-5">✿</span>
       </section>
+      <GratitudeTree revision={revision} onOpen={item => { setSelected(item); readDialog.current.showModal(); }} />
       <section id="loi-tri-an" className="border-t border-[#edddc2] bg-linear-to-b from-[#fff9e4] to-cream px-5 py-12 md:px-7">
         <div className="flex items-center justify-between gap-5"><div><span className={eyebrow}>TỪ TRÁI TIM NGƯỜI HỌC TRÒ</span><h2 className="my-3 font-display text-3xl">Danh sách lời tri ân</h2><p className="text-xs text-[#917867]">Mỗi lời nhắn là một đóa hoa dành tặng thầy cô.</p></div><button className={`${button} hidden md:block`} onClick={openForm}>✎ &nbsp; Gửi lời tri ân</button></div>
         <div className="mt-7 mb-6 flex items-center justify-between gap-4"><label className="flex w-full max-w-sm items-center gap-3 rounded-lg border border-[#ead9bc] bg-white/70 px-4 py-3"><span aria-hidden="true">⌕</span><input type="search" maxLength={100} aria-label="Tìm lời tri ân" placeholder="Tìm tên thầy cô, người gửi…" value={query} onChange={e => { setQuery(e.target.value); setPage(1); }} className="min-w-0 flex-1 bg-transparent text-xs outline-none" /></label><span aria-live="polite" className="shrink-0 text-xs text-[#9c7a65]">{loading ? (items.length ? 'Đang cập nhật…' : 'Đang tải…') : error && !items.length ? '' : `${total} lời nhắn`}</span></div>
