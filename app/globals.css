@@ -234,8 +234,11 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 @media(max-width:700px) { .gratitude-intro { grid-template-columns:1fr; gap:6px; } .gratitude-illustration { max-width:230px; } }
 /* Keep the introduction centred independently of its illustration. */
 @media(min-width:1000px) {
- .gratitude-intro { display:block; min-height:360px; }
- .gratitude-intro-copy { width:min(100%,760px); margin-inline:auto; }
- .gratitude-illustration { position:absolute; left:0; top:50%; transform:translateY(-50%); width:clamp(150px,15vw,200px); }
+ .gratitude-intro { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2.5fr) minmax(0,1fr); gap:20px; padding-block:38px; }
+ .gratitude-intro-copy { width:100%; margin-inline:auto; }
+ .gratitude-illustration { position:static; transform:none; width:100%; max-width:250px; }
  .gratitude-intro-copy h1 { font-size:clamp(28px,2.6vw,38px); }
+ .gratitude-intro-copy p { font-size:13px; line-height:1.9; }
+ .gratitude-intro-copy p br { display:none; }
+ .gratitude-intro > span[aria-hidden] { position:static; justify-self:center; align-self:center; font-size:110px; line-height:1; }
 }
