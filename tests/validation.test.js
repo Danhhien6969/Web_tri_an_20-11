@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { validateTribute, parseQuery, escapeRegex } from '../lib/validation.js';
 import { wordCount } from '../lib/tribute-design.js';
 
-test('form supports private email fields, design selection and a 100-word limit', () => {
+test('form supports private email fields, design selection and a 200-word limit', () => {
   const base = { sender: 'An', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
   const result = validateTribute({ ...base, senderEmail: ' an@example.com ', recipientEmail: '', design: 'blush' });
   assert.equal(result.data.senderEmail, 'an@example.com'); assert.equal(result.data.design, 'blush');
@@ -12,8 +12,8 @@ test('form supports private email fields, design selection and a 100-word limit'
   assert.ok(validateTribute({ ...base, design: '<script>' }).error);
   assert.equal(wordCount('  Cảm ơn\n cô\t rất nhiều  '), 5);
   assert.equal(wordCount('  '), 0);
-  assert.ok(validateTribute({ ...base, message: Array(101).fill('cảm').join(' ') }).error);
-  assert.ok(validateTribute({ ...base, message: Array(100).fill('cảm').join(' ') }).data);
+  assert.ok(validateTribute({ ...base, message: Array(201).fill('cảm').join(' ') }).error);
+  assert.ok(validateTribute({ ...base, message: Array(200).fill('cảm').join(' ') }).data);
 });
 test('faculty/institute is optional, trimmed and restricted to plain text', () => {
   const base = { sender: 'An', teacher: 'Cô Lan', message: 'Cảm ơn cô vì những bài học quý báu.' };
