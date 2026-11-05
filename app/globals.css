@@ -220,3 +220,6 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .home-menu::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(to right,transparent 0%,#fffdf3f5 5%,#fffdf3fa 50%,#fffdf3f5 95%,transparent 100%); }
 .home-menu::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; pointer-events:none; background:linear-gradient(to right,transparent,#eeddc7 10%,#eeddc7 90%,transparent); }
 @media(max-width:600px) { .home-menu::before { background:linear-gradient(to right,transparent,#fffdf3fa 3%,#fffdf3fa 97%,transparent); } }
+
+.home-menu::before { -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 72%,transparent 100%); mask-image:linear-gradient(to bottom,#000 0%,#000 72%,transparent 100%); }
+.home-menu::after { opacity:0; }
