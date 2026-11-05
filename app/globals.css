@@ -208,3 +208,6 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .backdrop-branch-right { left:auto; right:0; transform:scaleX(-1); }
 
 .backdrop-book-left { left:1.5%; right:auto; transform:scaleX(-1); }
+
+.backdrop-branch { transform:scaleX(-1); }
+.backdrop-branch-right { transform:none; }
