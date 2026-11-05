@@ -38,3 +38,12 @@ test('storage failures and corrupt snapshots do not prevent API loading', async 
   assert.doesNotThrow(() => writeListCache(storage, 'key', data));
   assert.deepEqual(await loadTributes('', 1, { fetchImpl: async () => Response.json(data) }), data);
 });
+
+test('accepts the full thirty-card page from the API and cache', async () => {
+  const page = { ...data, items: Array.from({length:30}, (_,i)=>({...data.items[0],id:String(i)})), total:45, pageSize:30, pages:2 };
+  assert.deepEqual(await loadTributes('',1,{fetchImpl:async()=>Response.json(page)}),page);
+  const memory=new Map();const storage={getItem:k=>memory.get(k),setItem:(k,v)=>memory.set(k,v)};
+  writeListCache(storage,listKey('',1),page,1000);
+  assert.deepEqual(readListCache(storage,listKey('',1),2000),page);
+  await assert.rejects(loadTributes('',1,{fetchImpl:async()=>Response.json({...page,items:[...page.items,data.items[0]]})}),/Dữ liệu trả về chưa hợp lệ/);
+});
