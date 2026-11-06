@@ -1,3 +1,4 @@
+import { tributeHeartCounts } from '../../../../lib/tribute-hearts.js';
 import { ObjectId } from 'mongodb';
 import { getDatabase } from '../../../../lib/mongodb.js';
 export const runtime = 'nodejs';
@@ -11,6 +12,7 @@ export async function GET(request, context) {
     const item = await db.collection('tributes').findOne({ _id: new ObjectId(id), $or: [{ status: 'published' }, { status: { $exists: false } }] }, { projection: { sender: 1, teacher: 1, message: 1, teacherDepartment: 1, senderDepartment: 1, image: 1, design: 1 }, maxTimeMS: 5000 });
     if (!item) return respond({ error: 'Không tìm thấy bài viết.' }, 404);
     const { _id, ...data } = item;
-    return respond({ item: { ...data, id: _id.toString() } });
+    const counts=await tributeHeartCounts(db,[_id]);
+    return respond({ item: { ...data, id: _id.toString(), hearts:counts[_id.toString()]||0 } });
   } catch { return respond({ error: 'Chưa tải được bài viết.' }, 503); }
 }

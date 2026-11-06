@@ -1,3 +1,4 @@
+import TributeHeart from './TributeHeart';
 export default function TributeLetter({item}) {
  return <article className="tribute-letter">
   <header className="letter-heading">
@@ -8,6 +9,7 @@ export default function TributeLetter({item}) {
   </header>
   <div className="letter-message">{item.message}</div>
   {item.image&&<figure className="letter-memory"><img src={item.image} alt={`Ảnh kỷ niệm trong lời tri ân của ${item.sender}`} /><figcaption>Một kỷ niệm, một lời cảm ơn.</figcaption></figure>}
+  <div className="letter-heart"><TributeHeart item={item}/><span>Một trái tim, một lời yêu thương.</span></div>
   <footer className="letter-signature"><span className="letter-signature-heart" aria-hidden="true">♡</span><div><span className="letter-signature-label">Trân trọng gửi từ</span><p>{item.sender}</p>{item.senderDepartment&&<span className="letter-unit">Đơn vị: {item.senderDepartment}</span>}</div></footer>
  </article>;
 }

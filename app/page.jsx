@@ -15,6 +15,15 @@ const eyebrow = 'text-[10px] font-bold tracking-[.2em] text-[#be7660]';
 function Brand() { return <a href="#" className="flex flex-col leading-tight text-rose"><span className="font-script text-3xl">Từ trái tim</span><small className="mt-1 text-[9px] tracking-[.3em]">NGƯỜI HỌC TRÒ</small></a>; }
 
 export default function Home() {
+  useEffect(() => {
+    const update = event => {
+      const {id,hearts}=event.detail;
+      setItems(current=>current.map(item=>item.id===id?{...item,hearts}:item));
+      setSelected(current=>current?.id===id?{...current,hearts}:current);
+    };
+    window.addEventListener('tribute-heart',update);
+    return()=>window.removeEventListener('tribute-heart',update);
+  }, []);
   useLayoutEffect(() => {
     const navigation = performance.getEntriesByType('navigation')[0];
     if (navigation?.type !== 'reload') return;
