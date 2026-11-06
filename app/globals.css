@@ -374,11 +374,4 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 @keyframes tribute-announcement-scroll { to { transform:translateX(-50%); } }
 @media(max-width:600px) { .tribute-announcement { padding:8px 10px; } .announcement-track p { font-size:11px; } }
 @media(prefers-reduced-motion:reduce) { .announcement-track { animation:none; width:auto; } .announcement-track p { white-space:normal; padding:0; } .announcement-track p[aria-hidden],.tribute-announcement > button { display:none; } .announcement-window { mask-image:none; } }
-/* Feather all four poster edges without blurring the central artwork. */
-.home-poster-soft-edge {
- --poster-fade:clamp(12px,2vw,26px);
- -webkit-mask-image:linear-gradient(to right,transparent,#000 var(--poster-fade),#000 calc(100% - var(--poster-fade)),transparent),linear-gradient(to bottom,transparent,#000 var(--poster-fade),#000 calc(100% - var(--poster-fade)),transparent);
- -webkit-mask-composite:source-in;
- mask-image:linear-gradient(to right,transparent,#000 var(--poster-fade),#000 calc(100% - var(--poster-fade)),transparent),linear-gradient(to bottom,transparent,#000 var(--poster-fade),#000 calc(100% - var(--poster-fade)),transparent);
- mask-composite:intersect;
-}
+
