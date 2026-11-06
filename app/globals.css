@@ -375,3 +375,19 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 @media(max-width:600px) { .tribute-announcement { padding:8px 10px; } .announcement-track p { font-size:11px; } }
 @media(prefers-reduced-motion:reduce) { .announcement-track { animation:none; width:auto; } .announcement-track p { white-space:normal; padding:0; } .announcement-track p[aria-hidden],.tribute-announcement > button { display:none; } .announcement-window { mask-image:none; } }
 
+
+/* Fade only the closing panel background; keep its text and button crisp. */
+.tribute-closing-soft { position: relative; isolation: isolate; }
+.tribute-closing-soft::before {
+ content: "";
+ position: absolute;
+ inset: 0;
+ z-index: -1;
+ pointer-events: none;
+ border-radius: 16px;
+ background: rgb(255 239 166 / 70%);
+ -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+ -webkit-mask-composite: source-in;
+ mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+ mask-composite: intersect;
+}
