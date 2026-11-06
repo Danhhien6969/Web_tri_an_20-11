@@ -1,3 +1,4 @@
+import { detectImageType } from '../../../lib/image-type.js';
 import { forumCommentCounts } from '../../../lib/forum-comments.js';
 import { normalizeForumRuns, normalizeForumText } from '../../../lib/forum-format.js';
 import { forumVoteCounts } from '../../../lib/forum-votes.js';
@@ -24,22 +25,22 @@ export async function POST(request) {
       data.contentRuns = normalized || [{text:data.content,color:'rgb(0, 0, 0)',bold:false}];
     }
 
-    const image = form.get('image'); if (!image || !['image/jpeg','image/png','image/webp'].includes(image.type) || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);
+    const image = form.get('image'); if (!image || typeof image.arrayBuffer!=='function' || image.size > 3 * 1024 * 1024 || !image.size) return json({ error: 'Ảnh phải là JPG, PNG hoặc WebP, tối đa 3 MB.' }, 400);
     const avatarBytes = Buffer.from(await image.arrayBuffer());
-    const avatarValid = image.type === 'image/png' ? avatarBytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : image.type === 'image/jpeg' ? avatarBytes[0] === 255 && avatarBytes[1] === 216 && avatarBytes[2] === 255 : avatarBytes.toString('ascii',0,4) === 'RIFF' && avatarBytes.toString('ascii',8,12) === 'WEBP';
-    if (!avatarValid) return json({ error: 'Ảnh đại diện không hợp lệ.' }, 400);
+    const avatarType=detectImageType(avatarBytes);
+    if (!avatarType) return json({ error: 'Ảnh đại diện phải là JPG/JPEG, PNG hoặc WebP hợp lệ.' }, 400);
     const articleImage = form.get('articleImage');
     if (articleImage?.size) {
-      if (!['image/jpeg','image/png','image/webp'].includes(articleImage.type) || articleImage.size > 2 * 1024 * 1024 || articleImage.size + image.size > 3 * 1024 * 1024) return json({ error: 'Ảnh minh họa tối đa 2 MB; tổng hai ảnh tối đa 3 MB.' }, 400);
+      if (typeof articleImage.arrayBuffer!=='function' || articleImage.size > 2 * 1024 * 1024 || articleImage.size + image.size > 3 * 1024 * 1024) return json({ error: 'Ảnh minh họa tối đa 2 MB; tổng hai ảnh tối đa 3 MB.' }, 400);
       const bytes = Buffer.from(await articleImage.arrayBuffer());
-      const valid = articleImage.type === 'image/png' ? bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : articleImage.type === 'image/jpeg' ? bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255 : bytes.toString('ascii',0,4) === 'RIFF' && bytes.toString('ascii',8,12) === 'WEBP';
-      if (!valid) return json({ error: 'Ảnh minh họa không hợp lệ.' }, 400);
-      data.articleImage = bytes; data.articleImageType = articleImage.type;
+      const articleType=detectImageType(bytes);
+      if (!articleType) return json({ error: 'Ảnh minh họa phải là JPG/JPEG, PNG hoặc WebP hợp lệ.' }, 400);
+      data.articleImage = bytes; data.articleImageType = articleType;
     }
     const db = await getDatabase();
     const bucket = Math.floor(Date.now() / 60000); const window = await db.collection('write_windows').findOneAndUpdate({ _id: `forum:${bucket}` }, { $inc: { count: 1 }, $setOnInsert: { expiresAt: new Date((bucket + 2) * 60000) } }, { upsert: true, returnDocument: 'after' });
     if (window.count > 10) return json({ error: 'Vui lòng thử lại sau một phút.' }, 429);
-    await db.collection('forum_entries').insertOne({ ...data, image: avatarBytes, imageType: image.type, status: 'pending', createdAt: new Date() });
+    await db.collection('forum_entries').insertOne({ ...data, image: avatarBytes, imageType: avatarType, status: 'pending', createdAt: new Date() });
     return json({ ok: true }, 201);
   } catch { return json({ error: 'Chưa gửi được bài viết. Vui lòng thử lại sau.' }, 503); }
 }
