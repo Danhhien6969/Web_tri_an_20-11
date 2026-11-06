@@ -301,3 +301,10 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
  .tribute-reader-letter .reader-actions { padding:20px 14px; }
  .tribute-reader-letter .reader-actions section button { min-height:42px; }
 }
+
+.tribute-list-heading { display:flex; align-items:center; gap:24px; }
+.tribute-list-heading-copy { min-width:0; }
+.tribute-list-heading-book { width:132px; height:132px; object-fit:contain; flex-shrink:0; }
+.tribute-list-heading > button { margin-left:auto; flex-shrink:0; }
+@media(max-width:700px) { .tribute-list-heading { gap:12px; } .tribute-list-heading-copy { flex:1; } .tribute-list-heading-book { width:88px; height:88px; } }
+@media(max-width:400px) { .tribute-list-heading-book { width:64px; height:64px; } }
