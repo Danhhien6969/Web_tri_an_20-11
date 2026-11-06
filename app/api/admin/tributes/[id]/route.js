@@ -30,3 +30,19 @@ export async function PATCH(request, context) {
     return json({ item: { ...data, id: _id.toString(), status: data.status || 'published' } });
   } catch (error) { return failure(error); }
 }
+
+export async function DELETE(request, context) {
+  if (!checkOrigin(request)) return json({ error: 'Nguồn gửi không hợp lệ.' }, 403);
+  if (!readToken(request)) return json({ error: 'Bạn cần đăng nhập quản trị.' }, 401);
+  try {
+    const db = await getDatabase();
+    if (!await getAdmin(db, request)) return json({ error: 'Phiên đăng nhập đã hết hạn.' }, 401);
+    const { id } = await context.params;
+    if (!/^[a-f\d]{24}$/i.test(id)) return json({ error: 'Bài viết không hợp lệ.' }, 400);
+    const entryId = new ObjectId(id);
+    const result = await db.collection('tributes').deleteOne({ _id: entryId });
+    if (!result.deletedCount) return json({ error: 'Không tìm thấy bài viết.' }, 404);
+    await Promise.all([db.collection('tribute_hearts').deleteMany({ entryId })]);
+    return json({ deleted: true });
+  } catch (error) { return failure(error); }
+}

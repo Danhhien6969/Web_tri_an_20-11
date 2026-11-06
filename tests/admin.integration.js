@@ -2,7 +2,7 @@ import { GET as tributeTree } from '../app/api/tributes/tree/route.js';
 import { castForumVote } from '../lib/forum-votes.js';
 import { GET as moderationCounts } from '../app/api/admin/moderation/route.js';
 import { GET as forumAdminList } from '../app/api/admin/forum/route.js';
-import { PATCH as forumModerate } from '../app/api/admin/forum/[id]/route.js';
+import { PATCH as forumModerate, DELETE as deleteForum } from '../app/api/admin/forum/[id]/route.js';
 import { GET as forumPublicList } from '../app/api/forum/route.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,7 +11,7 @@ import { MongoClient } from 'mongodb';
 import { hashPassword, COOKIE, tokenHash } from '../lib/admin-auth.js';
 import { GET as session, POST as login, DELETE as logout } from '../app/api/admin/session/route.js';
 import { GET as list, POST as create } from '../app/api/admin/tributes/route.js';
-import { PATCH as edit } from '../app/api/admin/tributes/[id]/route.js';
+import { PATCH as edit, DELETE as deleteTribute } from '../app/api/admin/tributes/[id]/route.js';
 import { POST as password } from '../app/api/admin/password/route.js';
 import { GET as publicList, POST as publicCreate } from '../app/api/tributes/route.js';
 
@@ -76,6 +76,14 @@ test('admin authentication, moderation, CSRF, session expiry and password revoca
     assert.equal((await (await publicList(req('/api/tributes'))).json()).total, 0);
     const created = await create(req('/api/admin/tributes', 'POST', { ...sample, status: 'published' }, cookie));
     assert.equal(created.status, 201);
+    for (const [handler, path, ctx, collection] of [[deleteTribute, '/api/admin/tributes/'+id, context, 'tributes'], [deleteForum, '/api/admin/forum/'+story.insertedId, storyContext, 'forum_entries']]) {
+      assert.equal((await handler(req(path,'DELETE'),ctx)).status,401);
+      assert.equal((await handler(req(path,'DELETE',undefined,cookie,'https://evil.example'),ctx)).status,403);
+      assert.equal((await handler(req(path,'DELETE',undefined,cookie),ctx)).status,200);
+      assert.equal(await db.collection(collection).countDocuments({_id:collection==='tributes'?new (await import('mongodb')).ObjectId(id):story.insertedId}),0);
+      assert.equal((await handler(req(path,'DELETE',undefined,cookie),ctx)).status,404);
+    }
+    assert.equal(await db.collection('forum_votes').countDocuments({entryId:story.insertedId}),0);
     assert.equal((await password(req('/api/admin/password', 'POST', { currentPassword: 'wrong', newPassword: 'Another-password-123' }, cookie))).status, 400);
     assert.equal((await password(req('/api/admin/password', 'POST', { currentPassword: pass, newPassword: 'Another-password-123' }, cookie))).status, 200);
     assert.equal((await list(req('/api/admin/tributes', 'GET', undefined, cookie))).status, 401);
