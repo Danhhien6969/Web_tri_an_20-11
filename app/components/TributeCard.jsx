@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
+import TributeHeart from './TributeHeart';
 import { DESIGNS } from '../../lib/tribute-design.js';
-export default function TributeCard({ item, preview = false, expanded = false }) {
+export default function TributeCard({ item, preview = false, expanded = false, onOpen }) {
   const [failedImage,setFailedImage] = useState(null);
   const hasImage = !!item.image && failedImage !== item.image;
   const design = DESIGNS.includes(item.design) ? item.design : 'garden';
@@ -15,7 +16,8 @@ export default function TributeCard({ item, preview = false, expanded = false })
       {item.image && (preview || expanded) && <img src={item.image} alt="Ảnh kỷ niệm kèm lời tri ân" className="mb-5 max-h-64 w-full rounded-lg object-contain" />}
       {!preview && !expanded && <span className="mb-4 text-xs font-semibold text-rose">Xem chi tiết{hasImage ? ' · Có ảnh kỷ niệm' : ''} →</span>}
       <div className="tribute-card-recipient">Gửi đến Thầy/Cô: <strong>{item.teacher || ''}</strong>{item.teacherDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.teacherDepartment}</span>}</div>
-      <div className="tribute-card-sender"><span className="tribute-card-avatar">{item.sender?.charAt(0).toUpperCase() || ''}</span><span>{item.sender || ''}{item.senderDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.senderDepartment}</span>}</span></div>
+      <div className="tribute-card-sender"><span className="tribute-card-avatar">{item.sender?.charAt(0).toUpperCase() || ''}</span><span>{item.sender || ''}{item.senderDepartment && <span className="mt-1 block text-xs leading-5 text-stone-500">Đơn vị: {item.senderDepartment}</span>}</span>{!preview && <TributeHeart item={item} />}</div>
     </div>
+    {onOpen && <button type="button" className="tribute-card-open-overlay" onClick={onOpen} aria-label={`Đọc lời tri ân của ${item.sender} gửi đến ${item.teacher}`} />}
   </div>;
 }
