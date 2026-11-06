@@ -60,7 +60,7 @@ export default function Home() {
         try { writeListCache(sessionStorage, key, data); } catch {}
       } catch (e) { if (!controller.signal.aborted) setError(e.message || 'Chưa tải được lời tri ân.'); }
       finally { if (!controller.signal.aborted) setLoading(false); }
-    }, 300);
+    }, query ? 300 : 0);
     return () => { clearTimeout(timer); controller.abort(); };
   }, [query, page, revision]);
   useEffect(() => { if (toast) { const timer = setTimeout(() => setToast(''), 4500); return () => clearTimeout(timer); } }, [toast]);
@@ -102,11 +102,11 @@ export default function Home() {
     </header>
     <main className="mx-auto max-w-[1240px]">
       <section className="mx-auto w-full max-w-[960px] overflow-hidden md:rounded-b-xl" aria-label="Từ trái tim người học trò gửi đến thầy cô">
-        <img src="/banner.png" width="6773" height="3716" alt="Từ trái tim người học trò gửi đến thầy cô! Happy Teachers’ Day 20.11" className="h-auto w-full" fetchPriority="high" />
+        <img src="/banner-optimized.webp" width="6773" height="3716" alt="Từ trái tim người học trò gửi đến thầy cô! Happy Teachers’ Day 20.11" className="h-auto w-full" fetchPriority="high" />
         <a href="#loi-tri-an" className="flex items-center justify-between bg-gold/70 px-6 py-3 text-[10px] tracking-wide">Khám phá những lời yêu thương <span className="text-2xl text-rose">↓</span></a>
       </section>
       <section id="ky-uc" className="gratitude-intro relative overflow-hidden px-6 py-10 text-center md:py-14">
-        <div className="gratitude-illustration"><img src="/teachers-gratitude.png" width="800" height="1100" alt="Thầy cô cùng hoa và sách trong ngày tri ân" loading="lazy" /></div>
+        <div className="gratitude-illustration"><img src="/teachers-gratitude-optimized.webp" width="800" height="1100" alt="Thầy cô cùng hoa và sách trong ngày tri ân" loading="lazy" /></div>
         <div className="gratitude-intro-copy">
         <span className={eyebrow}>THÁNG 11 • MÙA TRI ÂN</span>
         <h1 className="my-5 font-display text-4xl leading-snug md:text-5xl">Có những lời cảm ơn,<br /><em className="text-rose">mãi còn trong tim.</em></h1>
@@ -126,7 +126,7 @@ export default function Home() {
         {!loading && !error && pages > 1 && <nav aria-label="Phân trang" className="mt-8 flex items-center justify-center gap-5 text-xs"><button className={button} disabled={page <= 1} onClick={() => setPage(p => p - 1)}>← Trước</button><span>Trang {page} / {pages}</span><button className={button} disabled={page >= pages} onClick={() => setPage(p => p + 1)}>Sau →</button></nav>}
       </section>
       <section className="mx-5 mb-6 rounded-xl bg-gold/70 px-5 py-6 text-center md:mx-7"><span className="text-xl text-rose" aria-hidden="true">♡</span><p className="my-3 font-display text-2xl leading-snug">Dù đi muôn phương,<br /><em className="text-rose">vẫn nhớ một mái trường.</em></p><button className={button} onClick={openForm}>Gửi đến thầy cô một lời cảm ơn ↗</button></section>
-      <div className="mx-5 mb-8 overflow-hidden rounded-xl md:mx-7"><img src="/home-forum-poster.png" width="2169" height="725" alt="Từ trái tim người học trò gửi đến thầy cô — nhận bài từ 05/11 đến 20/11, bài viết tối đa 1.500 từ" loading="lazy" className="h-auto w-full" /></div>
+      <div className="mx-5 mb-8 overflow-hidden rounded-xl md:mx-7"><img src="/home-forum-poster-optimized.webp" width="2169" height="725" alt="Từ trái tim người học trò gửi đến thầy cô — nhận bài từ 05/11 đến 20/11, bài viết tối đa 1.500 từ" loading="lazy" className="h-auto w-full" /></div>
       <ForumEntries />
       <GratitudeTree revision={revision} onOpen={item => { setSelected(item); readDialog.current.showModal(); }} />
     </main>

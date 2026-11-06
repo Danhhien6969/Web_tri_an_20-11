@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient } from 'mongodb';
 import { GET, POST } from '../app/api/tributes/route.js';
+import { GET as getImage } from '../app/api/tributes/[id]/image/route.js';
 
 test('MongoDB + API: validation, persistence, pagination, literal search and rate limit', { timeout: 180000 }, async () => {
   const mongo = await MongoMemoryServer.create();
@@ -26,6 +27,10 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
     assert.equal(stored.recipientEmail, sample.recipientEmail);
     assert.equal(stored.design, 'blush');
     assert.equal(stored.status, 'pending');
+    const picture=Buffer.from('89504e470d0a1a0a','hex');
+    await db.collection('tributes').updateOne({_id:stored._id},{$set:{image:'data:image/png;base64,'+picture.toString('base64')}});
+    const imageContext={params:Promise.resolve({id:created.id})};
+    assert.equal((await getImage(new Request('http://localhost/api/tributes/'+created.id+'/image'),imageContext)).status,404);
     const beforeApproval = await (await GET(new Request('http://localhost/api/tributes'))).json();
     assert.equal(beforeApproval.total, 0);
     await db.collection('tributes').updateOne({ _id: stored._id }, { $set: { status: 'published' } });
@@ -33,6 +38,14 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
     const list = await (await GET(new Request('http://localhost/api/tributes'))).json();
     assert.equal(list.total, 31); assert.equal(list.items.length, 30); assert.equal(list.items[0].id, created.id);
     assert.equal(list.items[0].design, 'blush');
+    assert.equal(list.items[0].image,`/api/tributes/${created.id}/image`);
+    assert.ok(!JSON.stringify(list).includes('data:image'));
+    const imageResponse=await getImage(new Request('http://localhost/api/tributes/'+created.id+'/image'),imageContext);
+    assert.equal(imageResponse.status,200);assert.equal(imageResponse.headers.get('content-type'),'image/png');
+    assert.deepEqual(Buffer.from(await imageResponse.arrayBuffer()),picture);
+    await db.collection('tributes').updateOne({_id:stored._id},{$set:{status:'hidden'}});
+    assert.equal((await getImage(new Request('http://localhost/api/tributes/'+created.id+'/image'),imageContext)).status,404);
+    await db.collection('tributes').updateOne({_id:stored._id},{$set:{status:'published'}});
     assert.equal(list.items[0].teacherDepartment, sample.teacherDepartment);
     assert.equal(list.items[0].senderDepartment, sample.senderDepartment);
     assert.equal('senderEmail' in list.items[0], false);

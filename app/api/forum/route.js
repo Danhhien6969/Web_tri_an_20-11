@@ -48,8 +48,8 @@ export async function GET(request) {
   if (!Number.isSafeInteger(page) || page < 1 || page > 10000) return Response.json({error:'Trang không hợp lệ.'},{status:400});
   try {
     const db=await getDatabase(); const collection=db.collection('forum_entries'); const filter={status:'published'};
-    const [rows,total]=await Promise.all([collection.find(filter,{projection:{title:1,name:1,createdAt:1,content:1},maxTimeMS:5000}).sort({createdAt:-1,_id:-1}).skip((page-1)*9).limit(9).toArray(),collection.countDocuments(filter,{maxTimeMS:5000})]);
+    const [rows,total]=await Promise.all([collection.aggregate([{$match:filter},{$sort:{createdAt:-1,_id:-1}},{$skip:(page-1)*9},{$limit:9},{$project:{title:1,name:1,createdAt:1,excerpt:{$substrCP:['$content',0,220]}}}],{maxTimeMS:5000}).toArray(),collection.countDocuments(filter,{maxTimeMS:5000})]);
     const voteCounts=await forumVoteCounts(db,rows.map(r=>r._id));
-    return Response.json({items:rows.map(({_id,content,...item})=>({id:_id.toString(),...item,votes:voteCounts[_id.toString()]||0,excerpt:content.slice(0,220)})),pages:Math.ceil(total/9)}, {headers:{'Cache-Control':'no-store'}});
+    return Response.json({items:rows.map(({_id,...item})=>({id:_id.toString(),...item,votes:voteCounts[_id.toString()]||0})),pages:Math.ceil(total/9)}, {headers:{'Cache-Control':'no-store'}});
   } catch { return Response.json({error:'Chưa tải được danh sách câu chuyện. Vui lòng thử lại.'},{status:503}); }
 }

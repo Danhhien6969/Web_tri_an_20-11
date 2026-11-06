@@ -6,7 +6,7 @@ export default function ForumPage() {
     <header className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-b border-[#eeddc7] px-6 py-5"><a href="/" className="font-script text-3xl text-rose">Từ trái tim</a><nav aria-label="Điều hướng diễn đàn" className="flex flex-wrap gap-5 text-sm"><a href="/">Trang chủ</a><a href="/nhung-dau-an-thay-co" aria-current="page" className="font-semibold text-rose">Những dấu ấn cùng Thầy, Cô</a><a href="/#loi-tri-an">Lời tri ân</a></nav></header>
     <main className="mx-auto max-w-[1240px] pb-16">
       <h1 className="sr-only">Những dấu ấn cùng Thầy, Cô</h1>
-      <img src="/forum-poster.png" width="8677" height="2901" alt="Từ trái tim người học trò gửi đến Thầy Cô. Nhận bài từ 05/11 đến 20/11, tất cả tác giả, bài viết tối đa 1.500 từ." className="block h-auto w-full" fetchPriority="high" />
+      <img src="/forum-poster-optimized.webp" width="8677" height="2901" alt="Từ trái tim người học trò gửi đến Thầy Cô. Nhận bài từ 05/11 đến 20/11, tất cả tác giả, bài viết tối đa 1.500 từ." className="block h-auto w-full" fetchPriority="high" />
       <section className="px-6 py-12 text-center md:px-16 md:py-16" aria-labelledby="forum-info">
         <span className="text-xs font-semibold tracking-widest text-[#be7660]">NHỮNG DẤU ẤN CÙNG THẦY, CÔ</span>
         <h2 id="forum-info" className="mt-4 mb-7 font-display text-3xl text-rose md:text-4xl">Thông tin diễn đàn</h2>
