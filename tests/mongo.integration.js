@@ -55,6 +55,11 @@ test('MongoDB + API: validation, persistence, pagination, literal search and rat
     const match = await (await GET(new Request('http://localhost/api/tributes?q=' + encodeURIComponent('(Toán)')))).json();
     assert.equal(match.total, 1);
     const literal = await (await GET(new Request('http://localhost/api/tributes?q=.*'))).json(); assert.equal(literal.total, 0);
+    const fallbackRows=await db.collection('tributes').insertMany(['',null,'not-an-image'].map(image=>({sender:'Test',teacher:'Image fallback test',message:'A message without a real photo.',image,status:'published',createdAt:new Date()})));
+    const fallbackList=await (await GET(new Request('http://localhost/api/tributes?q=Image%20fallback%20test'))).json();
+    assert.equal(fallbackList.items.length,3);
+    assert.ok(fallbackList.items.every(item=>!item.image),'Empty or malformed image fields must use the school image');
+    await db.collection('tributes').deleteMany({_id:{$in:Object.values(fallbackRows.insertedIds)}});
     await db.collection('write_windows').updateOne({ _id: `minute:${Math.floor(Date.now() / 60000)}` }, { $set: { count: 60, expiresAt: new Date(Date.now() + 120000) } }, { upsert: true });
     assert.equal((await post(sample)).status, 429);
   } finally {
