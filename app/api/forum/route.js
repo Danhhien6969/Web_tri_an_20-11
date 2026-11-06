@@ -9,7 +9,7 @@ export async function POST(request) {
   if (request.headers.get('origin') !== new URL(request.url).origin) return json({ error: 'Nguồn gửi không hợp lệ.' }, 403);
   try {
     const reader = request.body.getReader(); const chunks = []; let size = 0;
-    while (true) { const { done, value } = await reader.read(); if (done) break; size += value.length; if (size > 3500000) { await reader.cancel(); return json({ error: 'Dữ liệu quá lớn. Ảnh tối đa 3 MB.' }, 413); } chunks.push(value); }
+    while (true) { const { done, value } = await reader.read(); if (done) break; size += value.length; if (size > 6 * 1024 * 1024) { await reader.cancel(); return json({ error: 'Dữ liệu quá lớn. Tổng hai ảnh tối đa 5 MB.' }, 413); } chunks.push(value); }
     const form = await new Response(Buffer.concat(chunks), { headers: { 'Content-Type': request.headers.get('content-type') || '' } }).formData();
     const data = {};
     for (const [key, max] of [['name',100],['phone',100],['email',254],['title',Infinity],['content',Infinity]]) { const value = form.get(key); if (typeof value !== 'string' || !value.trim() || value.trim().length > max) return json({ error: 'Vui lòng kiểm tra thông tin bài viết.' }, 400); data[key] = normalizeForumText(value.trim()); }
@@ -31,7 +31,7 @@ export async function POST(request) {
     if (!avatarType) return json({ error: 'Ảnh đại diện phải là JPG/JPEG, PNG hoặc WebP hợp lệ.' }, 400);
     const articleImage = form.get('articleImage');
     if (articleImage?.size) {
-      if (typeof articleImage.arrayBuffer!=='function' || articleImage.size > 2 * 1024 * 1024 || articleImage.size + image.size > 3 * 1024 * 1024) return json({ error: 'Ảnh minh họa tối đa 2 MB; tổng hai ảnh tối đa 3 MB.' }, 400);
+      if (typeof articleImage.arrayBuffer!=='function' || articleImage.size > 2 * 1024 * 1024 || articleImage.size + image.size > 5 * 1024 * 1024) return json({ error: 'Ảnh minh họa tối đa 2 MB; tổng hai ảnh tối đa 5 MB.' }, 400);
       const bytes = Buffer.from(await articleImage.arrayBuffer());
       const articleType=detectImageType(bytes);
       if (!articleType) return json({ error: 'Ảnh minh họa phải là JPG/JPEG, PNG hoặc WebP hợp lệ.' }, 400);
