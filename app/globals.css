@@ -361,3 +361,16 @@ dialog::backdrop { background: #43201780; backdrop-filter: blur(4px); }
 .forum-comment-list li p { margin-top:7px; white-space:pre-wrap; overflow-wrap:anywhere; font-size:14px; line-height:1.85; color:#675046; }
 .forum-comments-empty { padding:30px 12px; text-align:center; font-size:13px; line-height:1.8; color:#a08a77; }
 @media(max-width:600px) { .forum-comment-form { padding:16px; } .forum-comment-form-bottom button { width:100%; } }
+
+.tribute-announcement { position:relative; display:flex; align-items:center; gap:10px; padding:9px 18px; background:linear-gradient(110deg,#fff0bc,#fff8dc 50%,#ffedb1); border-bottom:1px solid #eacb7d66; color:#81513d; }
+.tribute-announcement::after { content:''; pointer-events:none; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,#e4ad43,transparent); }
+.announcement-window { flex:1; min-width:0; overflow:hidden; mask-image:linear-gradient(90deg,transparent,#000 2%,#000 98%,transparent); }
+.announcement-track { display:flex; width:max-content; animation:tribute-announcement-scroll 65s linear infinite; }
+.announcement-track p { flex-shrink:0; margin:0; padding-right:64px; white-space:nowrap; font-size:12px; line-height:1.8; letter-spacing:.025em; }
+.announcement-track strong { color:#d32f46; font-weight:600; }
+.announcement-star { display:inline-block; margin-right:18px; color:#d5a03d; text-shadow:0 0 7px #f0b94255; }
+.tribute-announcement > button { z-index:1; display:flex; align-items:center; justify-content:center; flex-shrink:0; width:26px; height:26px; border-radius:50%; border:1px solid #e4bc6b88; background:#fffaf0aa; color:#a97942; font-size:12px; }
+.tribute-announcement:hover .announcement-track,.tribute-announcement.is-paused .announcement-track { animation-play-state:paused; }
+@keyframes tribute-announcement-scroll { to { transform:translateX(-50%); } }
+@media(max-width:600px) { .tribute-announcement { padding:8px 10px; } .announcement-track p { font-size:11px; } }
+@media(prefers-reduced-motion:reduce) { .announcement-track { animation:none; width:auto; } .announcement-track p { white-space:normal; padding:0; } .announcement-track p[aria-hidden],.tribute-announcement > button { display:none; } .announcement-window { mask-image:none; } }

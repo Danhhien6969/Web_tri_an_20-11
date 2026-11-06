@@ -1,5 +1,6 @@
 'use client';
 import GratitudeTree from './components/GratitudeTree';
+import TributeAnnouncement from './components/TributeAnnouncement';
 import ForumEntries from './components/ForumEntries';
 import HomeBackdrop from './components/HomeBackdrop';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -105,7 +106,7 @@ export default function Home() {
   return <>
     <TributeConfetti />
     <HomeBackdrop />
-    <div className="bg-gold/70 px-3 py-2 text-center text-[9px] tracking-widest">CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM <b className="ml-4 text-rose">20 / 11</b></div>
+    <TributeAnnouncement />
     <header className="home-menu sticky top-0 z-20 mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 border-b border-[#eeddc7] bg-cream px-5 py-4 md:px-7">
       <Brand /><nav aria-label="Điều hướng chính" className="flex flex-wrap items-center gap-3 text-xs font-semibold md:gap-7"><a className="text-rose" href="/nhung-dau-an-thay-co">Những dấu ấn cùng Thầy, Cô</a><a className="hidden md:block" href="#loi-tri-an">Lời tri ân</a><button className={button} onClick={openForm}>✎ &nbsp; Gửi lời tri ân</button></nav>
     </header>
