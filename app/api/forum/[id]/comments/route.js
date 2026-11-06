@@ -5,7 +5,7 @@ import { checkOrigin,json,readBody,failure } from '../../../../../lib/admin-http
 export const runtime='nodejs';
 const uuid=/^[a-f\d]{8}-[a-f\d]{4}-4[a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i;
 const validId=id=>/^[a-f\d]{24}$/i.test(id);
-const publicComment=item=>({id:item._id,name:item.name,message:item.message,createdAt:item.createdAt});
+const publicComment=item=>({id:item._id,name:item.name,unit:item.unit||'',message:item.message,createdAt:item.createdAt});
 async function published(db,id){return db.collection('forum_entries').findOne({_id:new ObjectId(id),status:'published'},{projection:{_id:1},maxTimeMS:5000});}
 export async function GET(request,{params}) {
  const {id}=await params;const page=Number(new URL(request.url).searchParams.get('page')||1);
@@ -14,7 +14,7 @@ export async function GET(request,{params}) {
  try{
   const db=await getDatabase();if(!await published(db,id))return json({error:'Bài viết chưa được duyệt hoặc đã ẩn.'},404);
   const filter={entryId:new ObjectId(id),status:'published'},pageSize=20;
-  const [rows,total]=await Promise.all([db.collection('forum_comments').find(filter,{projection:{name:1,message:1,createdAt:1},maxTimeMS:5000}).sort({createdAt:-1,_id:-1}).skip((page-1)*pageSize).limit(pageSize).toArray(),db.collection('forum_comments').countDocuments(filter,{maxTimeMS:5000})]);
+  const [rows,total]=await Promise.all([db.collection('forum_comments').find(filter,{projection:{name:1,unit:1,message:1,createdAt:1},maxTimeMS:5000}).sort({createdAt:-1,_id:-1}).skip((page-1)*pageSize).limit(pageSize).toArray(),db.collection('forum_comments').countDocuments(filter,{maxTimeMS:5000})]);
   return json({items:rows.map(publicComment),total,page,pages:Math.ceil(total/pageSize)});
  }catch(error){return failure(error);}
 }
@@ -24,6 +24,9 @@ export async function POST(request,{params}) {
  try{
   const body=await readBody(request);
   if(typeof body?.name!=='string'||typeof body?.message!=='string'||typeof body?.visitor!=='string'||typeof body?.submission!=='string'||!uuid.test(body.visitor)||!uuid.test(body.submission))return json({error:'Vui lòng nhập tên và nội dung bình luận.'},400);
+  if(body.unit!==undefined&&typeof body.unit!=='string')return json({error:'Tên đơn vị không hợp lệ.'},400);
+  const unit=(body.unit||'').trim().normalize('NFC');
+  if(unit.length>120)return json({error:'Tên đơn vị tối đa 120 ký tự.'},400);
   const name=body.name.trim().normalize('NFC'),message=body.message.trim().normalize('NFC');
   if(!name||name.length>70||!message||message.length>2000)return json({error:'Tên tối đa 70 ký tự, bình luận từ 1 đến 2.000 ký tự.'},400);
   const db=await getDatabase();if(!await published(db,id))return json({error:'Bài viết chưa được duyệt hoặc đã ẩn.'},404);
@@ -35,7 +38,7 @@ export async function POST(request,{params}) {
     const window=await db.collection('write_windows').findOneAndUpdate({_id:windowKey},{$inc:{count:1},$setOnInsert:{expiresAt:new Date((bucket+2)*60000)}},{upsert:true,returnDocument:'after'});
     if(window.count>limit)return json({error:'Bạn gửi bình luận quá nhanh. Vui lòng đợi một phút rồi thử lại.'},429);
    }
-   item={_id:key,entryId,name,message,status:'published',createdAt:new Date()};
+   item={_id:key,entryId,name,unit,message,status:'published',createdAt:new Date()};
    try{await comments.insertOne(item);}catch(error){if(error.code!==11000)throw error;item=await comments.findOne({_id:key});}
   }
   const total=await comments.countDocuments({entryId,status:'published'},{maxTimeMS:5000});

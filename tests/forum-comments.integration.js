@@ -10,17 +10,20 @@ test('forum comments persist, paginate, count, deduplicate and protect unpublish
  try{
   db=await getDatabase();const {insertedId}=await db.collection('forum_entries').insertOne({title:'Bài thử',name:'Tác giả',content:'Cảm ơn thầy cô.',status:'published',createdAt:new Date()});
   const id=insertedId.toString(),context={params:Promise.resolve({id})};
-  const body={name:'Bạn đọc',message:'Câu chuyện rất ý nghĩa. 🌷',visitor:randomUUID(),submission:randomUUID()};
+  const body={name:'Bạn đọc',unit:'Khoa Công nghệ Thông tin',message:'Câu chuyện rất ý nghĩa. 🌷',visitor:randomUUID(),submission:randomUUID()};
   const send=(data=body,origin='http://localhost')=>POST(new Request(`http://localhost/api/forum/${id}/comments`,{method:'POST',headers:{origin,'Content-Type':'application/json'},body:JSON.stringify(data)}),context);
   const read=(page=1)=>GET(new Request(`http://localhost/api/forum/${id}/comments?page=${page}`),context);
   assert.equal((await send(body,'https://evil.example')).status,403);
   assert.equal((await send({...body,name:' '})).status,400);
+  assert.equal((await send({...body,unit:'x'.repeat(121)})).status,400);
+  assert.equal((await send({...body,unit:{bad:true}})).status,400);
   assert.equal((await send({...body,message:'x'.repeat(2001)})).status,400);
   assert.equal((await read(0)).status,400);
   const created=await send();assert.equal(created.status,201);assert.equal((await created.json()).item.message,body.message);
   assert.equal((await send()).status,201);assert.equal(await db.collection('forum_comments').countDocuments(),1);
   for(let i=0;i<20;i++)assert.equal((await send({...body,visitor:randomUUID(),submission:randomUUID(),name:'Bạn '+i})).status,201);
   const first=await (await read()).json(),second=await (await read(2)).json();
+  assert.equal(first.items[0].unit,body.unit);
   assert.equal(first.total,21);assert.equal(first.items.length,20);assert.equal(first.pages,2);assert.equal(second.items.length,1);
   assert.ok(first.items.every(item=>!('visitor' in item)&&!('entryId' in item)&&!('submission' in item)));
   assert.equal((await (await forumList(new Request('http://localhost/api/forum'))).json()).items[0].comments,21);
