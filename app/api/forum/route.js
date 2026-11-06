@@ -1,3 +1,4 @@
+import { forumCommentCounts } from '../../../lib/forum-comments.js';
 import { normalizeForumRuns, normalizeForumText } from '../../../lib/forum-format.js';
 import { forumVoteCounts } from '../../../lib/forum-votes.js';
 import { getDatabase } from '../../../lib/mongodb.js';
@@ -49,7 +50,7 @@ export async function GET(request) {
   try {
     const db=await getDatabase(); const collection=db.collection('forum_entries'); const filter={status:'published'};
     const [rows,total]=await Promise.all([collection.aggregate([{$match:filter},{$sort:{createdAt:-1,_id:-1}},{$skip:(page-1)*9},{$limit:9},{$project:{title:1,name:1,createdAt:1,excerpt:{$substrCP:['$content',0,220]}}}],{maxTimeMS:5000}).toArray(),collection.countDocuments(filter,{maxTimeMS:5000})]);
-    const voteCounts=await forumVoteCounts(db,rows.map(r=>r._id));
-    return Response.json({items:rows.map(({_id,...item})=>({id:_id.toString(),...item,votes:voteCounts[_id.toString()]||0})),pages:Math.ceil(total/9)}, {headers:{'Cache-Control':'no-store'}});
+    const [voteCounts,commentCounts]=await Promise.all([forumVoteCounts(db,rows.map(r=>r._id)),forumCommentCounts(db,rows.map(r=>r._id))]);
+    return Response.json({items:rows.map(({_id,...item})=>({id:_id.toString(),...item,votes:voteCounts[_id.toString()]||0,comments:commentCounts[_id.toString()]||0})),pages:Math.ceil(total/9)}, {headers:{'Cache-Control':'no-store'}});
   } catch { return Response.json({error:'Chưa tải được danh sách câu chuyện. Vui lòng thử lại.'},{status:503}); }
 }
