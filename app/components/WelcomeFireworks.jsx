@@ -6,7 +6,7 @@ export default function WelcomeFireworks({ onDone }) {
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){onDone();return;}
   const canvas=canvasRef.current,ctx=canvas.getContext('2d');
   if(!ctx){onDone();return;}
-  let width,height,frame,previous=0,start=null,nextBurst=0;
+  let width,height,frame,previous=0,start=null,launched=false;
   const particles=[],colors=['#ff1644','#ffba36','#ffda77','#ff7ba2','#42b9df'];
   function resize(){width=window.innerWidth;height=window.innerHeight;const ratio=Math.min(window.devicePixelRatio||1,2);canvas.width=width*ratio;canvas.height=height*ratio;ctx.setTransform(ratio,0,0,ratio,0,0);}
   resize();window.addEventListener('resize',resize);
@@ -22,7 +22,7 @@ export default function WelcomeFireworks({ onDone }) {
    if(start===null){start=now;previous=now;}
    const elapsed=(now-start)/1000,dt=Math.min((now-previous)/1000,.04);previous=now;
    ctx.clearRect(0,0,width,height);
-   if(elapsed>=nextBurst&&elapsed<1.5){launch();nextBurst+=.45;}
+   if(!launched){launch();launched=true;}
    for(let i=particles.length-1;i>=0;i--){
     const p=particles[i];p.life+=dt;if(p.life>p.max){particles.splice(i,1);continue;}
     const x=p.x,y=p.y;p.vy+=height*.32*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.pow(.88,dt);
