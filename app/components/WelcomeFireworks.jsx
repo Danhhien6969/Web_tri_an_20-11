@@ -27,7 +27,7 @@ export default function WelcomeFireworks({ onDone }) {
     for (let i = 0; i < count; i++) {
      const angle = i / count * Math.PI * 2;
      // Parametric heart: each spark reaches the outline at the same time.
-     const scale = Math.min(width * .4, height * .3) / 17;
+     const scale = Math.min(width * .48, height * .4) / 17;
      const dx = 16 * Math.sin(angle) ** 3 * scale;
      const dy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)) * scale;
      const travel = 1.25;
