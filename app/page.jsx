@@ -1,4 +1,5 @@
 'use client';
+import WelcomeCelebration from './components/WelcomeCelebration';
 import GratitudeTree from './components/GratitudeTree';
 import TributeAnnouncement from './components/TributeAnnouncement';
 import ForumEntries from './components/ForumEntries';
@@ -104,6 +105,7 @@ export default function Home() {
   }
 
   return <>
+    <WelcomeCelebration />
     <TributeConfetti />
     <HomeBackdrop />
     <TributeAnnouncement />
