@@ -25,9 +25,13 @@ export default function WelcomeFireworks({ onDone }) {
    for (let side = 0; side < 2; side++) {
     const center = point(side, 1);
     for (let i = 0; i < count; i++) {
-     const angle = i / count * Math.PI * 2, ring = i % 3;
-     const speed = Math.min(width, height) * (.23 + ring * .13 + Math.random() * .06);
-     sparks.push({ x: center.x, y: center.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, age: 0, life: 2 + Math.random() * .9, size: 1.8 + Math.random() * 1.8, color: colors[(i + side) % colors.length], star: i % 9 === 0, trail: [] });
+     const angle = i / count * Math.PI * 2;
+     // Parametric heart: each spark reaches the outline at the same time.
+     const scale = Math.min(width * .22, height * .26) / 17;
+     const dx = 16 * Math.sin(angle) ** 3 * scale;
+     const dy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)) * scale;
+     const travel = 1.25;
+     sparks.push({ x: center.x, y: center.y, dx, dy, travel, age: 0, life: 2.7 + Math.random() * .2, originX: center.x, originY: center.y, size: 1.8 + Math.random() * 1.8, color: colors[(i + side) % colors.length], star: i % 9 === 0, trail: [] });
     }
    }
   }
@@ -53,8 +57,11 @@ export default function WelcomeFireworks({ onDone }) {
     const p = sparks[i]; p.age += dt;
     if (p.age > p.life) { sparks.splice(i, 1); continue; }
     p.trail.unshift({ x: p.x, y: p.y }); if (p.trail.length > 5) p.trail.pop();
-    const drag = Math.pow(.35, dt); p.vx *= drag; p.vy = p.vy * drag + height * .1 * dt;
-    p.x += p.vx * dt; p.y += p.vy * dt;
+    const progress = Math.min(p.age / p.travel, 1);
+    const spread = 1 - (1 - progress) ** 3;
+    const fall = Math.max(0, p.age - 2) ** 2 * height * .035;
+    p.x = p.originX + p.dx * spread;
+    p.y = p.originY + p.dy * spread + fall;
     const fade = Math.pow(1 - p.age / p.life, .7);
     ctx.strokeStyle = p.color; ctx.lineWidth = p.size;
     if (p.trail.length) { ctx.globalAlpha = fade * .35; ctx.beginPath(); ctx.moveTo(p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y); ctx.lineTo(p.x, p.y); ctx.stroke(); }
