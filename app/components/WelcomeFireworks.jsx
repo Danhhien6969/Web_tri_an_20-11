@@ -17,17 +17,17 @@ export default function WelcomeFireworks({ onDone }) {
   resize(); window.addEventListener('resize', resize);
   function point(side, t) {
    const eased = 1 - Math.pow(1 - t, 2);
-   return { x: width * (side === 0 ? .3 + .07 * eased : .7 - .07 * eased), y: height * (1.04 - .72 * eased) };
+   return { x: width * (side === 0 ? .3 + .2 * eased : .7 - .2 * eased), y: height * (1.04 - .68 * eased) };
   }
   function burst() {
-   // One synchronized bloom from the two incoming comets, without repeat launches.
+   // Both comets meet at one point before a single heart blooms.
    const count = width < 600 ? 80 : 130;
-   for (let side = 0; side < 2; side++) {
-    const center = point(side, 1);
+   for (let side = 0; side < 1; side++) {
+    const center = { x: width * .5, y: height * .36 };
     for (let i = 0; i < count; i++) {
      const angle = i / count * Math.PI * 2;
      // Parametric heart: each spark reaches the outline at the same time.
-     const scale = Math.min(width * .22, height * .26) / 17;
+     const scale = Math.min(width * .4, height * .3) / 17;
      const dx = 16 * Math.sin(angle) ** 3 * scale;
      const dy = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)) * scale;
      const travel = 1.25;
