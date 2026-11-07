@@ -1,8 +1,11 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import WelcomeFireworks from './WelcomeFireworks';
 const key = 'welcome-teachers-day-2026';
 export default function WelcomeCelebration() {
  const dialog = useRef(null);
+ const [fireworks,setFireworks]=useState(false);
+ const finishFireworks=useCallback(()=>setFireworks(false),[]);
  useEffect(() => {
   // Shared article links should open directly without an introduction.
   if (location.hash || location.search) return;
@@ -19,7 +22,7 @@ export default function WelcomeCelebration() {
   dialog.current.close();
   document.body.style.overflow = '';
  }
- return <dialog ref={dialog} className="welcome-celebration" aria-labelledby="welcome-title" onCancel={event => {event.preventDefault();close();}}>
+ return <>{fireworks && <WelcomeFireworks onDone={finishFireworks}/>}<dialog ref={dialog} className="welcome-celebration" aria-labelledby="welcome-title" onCancel={event => {event.preventDefault();close();}}>
   <div className="welcome-particles" aria-hidden="true">{Array.from({length:18},(_,i)=><span key={i} style={{'--x':`${(i*37)%100}%`,'--delay':`${-(i%7)}s`,'--duration':`${6+i%5}s`}}>{i%3===0?'✿':'♥'}</span>)}</div>
   <button type="button" className="welcome-close" onClick={close} aria-label="Đóng lời chào mừng">×</button>
   <div className="welcome-content">
@@ -29,7 +32,7 @@ export default function WelcomeCelebration() {
    <p className="welcome-date">20<span> / </span>11</p>
    <p className="welcome-script">Từ trái tim người học trò</p>
    <p className="welcome-message">Xin gửi đến Thầy, Cô những lời cảm ơn và yêu thương chân thành nhất.</p>
-   <button type="button" className="welcome-enter" onClick={close} autoFocus>Khám phá ngay <span aria-hidden="true">→</span></button>
+   <button type="button" className="welcome-enter" onClick={()=>{close();setFireworks(true);}} autoFocus>Khám phá ngay <span aria-hidden="true">→</span></button>
   </div>
- </dialog>;
+ </dialog></>;
 }
