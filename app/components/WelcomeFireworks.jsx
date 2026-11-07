@@ -17,17 +17,17 @@ export default function WelcomeFireworks({ onDone }) {
   resize(); window.addEventListener('resize', resize);
   function point(side, t) {
    const eased = 1 - Math.pow(1 - t, 2);
-   return { x: width * (side === 0 ? .03 + .39 * eased : .97 - .39 * eased), y: height * (.86 - .53 * eased) - Math.sin(t * Math.PI) * height * .08 };
+   return { x: width * (side === 0 ? .3 + .07 * eased : .7 - .07 * eased), y: height * (1.04 - .72 * eased) };
   }
   function burst() {
    // One synchronized bloom from the two incoming comets, without repeat launches.
-   const count = width < 600 ? 48 : 76;
+   const count = width < 600 ? 80 : 130;
    for (let side = 0; side < 2; side++) {
     const center = point(side, 1);
     for (let i = 0; i < count; i++) {
      const angle = i / count * Math.PI * 2, ring = i % 3;
-     const speed = Math.min(width, height) * (.12 + ring * .075 + Math.random() * .04);
-     sparks.push({ x: center.x, y: center.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, age: 0, life: 1.5 + Math.random() * .9, size: 1.4 + Math.random() * 1.6, color: colors[(i + side) % colors.length], star: i % 9 === 0, trail: [] });
+     const speed = Math.min(width, height) * (.23 + ring * .13 + Math.random() * .06);
+     sparks.push({ x: center.x, y: center.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, age: 0, life: 2 + Math.random() * .9, size: 1.8 + Math.random() * 1.8, color: colors[(i + side) % colors.length], star: i % 9 === 0, trail: [] });
     }
    }
   }
@@ -62,7 +62,7 @@ export default function WelcomeFireworks({ onDone }) {
     if (p.star) { ctx.lineWidth = 1; ctx.globalAlpha = fade * (.6 + .4 * Math.sin(p.age * 12) ** 2); star(p.x, p.y, p.size * 2.6); }
    }
    ctx.globalAlpha = 1;
-   if (elapsed < 3.6) frame = requestAnimationFrame(draw); else onDone();
+   if (elapsed < 4.1) frame = requestAnimationFrame(draw); else onDone();
   }
   frame = requestAnimationFrame(draw);
   return () => { cancelAnimationFrame(frame); window.removeEventListener('resize', resize); };
