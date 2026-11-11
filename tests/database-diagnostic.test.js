@@ -5,6 +5,8 @@ test('diagnostics distinguish configuration, auth and nested TLS errors', () => 
   assert.equal(databaseDiagnostic(new Error('MONGODB_NOT_CONFIGURED')), 'MONGODB_URI_MISSING');
   assert.equal(databaseDiagnostic(new Error('INVALID_ADMIN_CONFIG')), 'ADMIN_CONFIG_INVALID');
   assert.equal(databaseDiagnostic({ code: 18 }), 'MONGODB_AUTH_FAILED');
+  assert.equal(databaseDiagnostic({ code: 8000, message: 'bad auth : authentication failed' }), 'MONGODB_AUTH_FAILED');
+  assert.equal(databaseDiagnostic({ code: 8000, message: 'other Atlas error' }), 'DATABASE_UNAVAILABLE');
   assert.equal(databaseDiagnostic({ code: 13 }), 'MONGODB_PERMISSION_DENIED');
   assert.equal(databaseDiagnostic({ name: 'MongoServerSelectionError', reason: { servers: new Map([['private-host', { error: { cause: { code: 'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR' } } }]]) } }), 'MONGODB_TLS_FAILED');
 });
