@@ -13,6 +13,11 @@ export async function POST(request) {
     const form = await new Response(Buffer.concat(chunks), { headers: { 'Content-Type': request.headers.get('content-type') || '' } }).formData();
     const data = {};
     for (const [key, max] of [['name',100],['phone',100],['email',254],['title',Infinity],['content',Infinity]]) { const value = form.get(key); if (typeof value !== 'string' || !value.trim() || value.trim().length > max) return json({ error: 'Vui lòng kiểm tra thông tin bài viết.' }, 400); data[key] = normalizeForumText(value.trim()); }
+    const unit = form.get('unit');
+    if (unit !== null) {
+      if (typeof unit !== 'string' || unit.trim().length > 100 || /[\r\n]/.test(unit)) return json({ error: 'Tên đơn vị tối đa 100 ký tự và phải nằm trên một dòng.' }, 400);
+      if (unit.trim()) data.unit = normalizeForumText(unit.trim());
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || form.get('agreed') !== 'on') return json({ error: 'Kiểm tra email và xác nhận đồng ý.' }, 400);
     const alignment = form.get('alignment') || 'left';
     const textColor = form.get('textColor') || '#60362c';
